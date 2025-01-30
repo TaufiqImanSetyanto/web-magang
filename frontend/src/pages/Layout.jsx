@@ -1,6 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/ptsgn_logo.png";
+import profile from "../assets/profile.png"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -74,10 +75,10 @@ export default function Example() {
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
+                      <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-100 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
-                        <img alt="" className="size-8 rounded-full" />
+                        <img alt="" src={profile} className="size-8 rounded-full" />
                       </MenuButton>
                     </div>
                     <MenuItems
@@ -122,7 +123,7 @@ export default function Example() {
             <div className="border-t border-gray-700 pt-4 pb-3">
               <div className="flex items-center px-5">
                 <div className="shrink-0">
-                  <img alt="" className="size-10 rounded-full" />
+                  <img alt="" src={profile} className="size-10 rounded-full" />
                 </div>
                 <div className="ml-3">
                   <div className="text-base/5 font-medium text-white">{username}</div>
