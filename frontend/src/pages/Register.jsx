@@ -1,5 +1,64 @@
-import logo from "./assets/ptsgn_logo.png";
-function App() {
+import logo from "../assets/ptsgn_logo.png";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+
+function Register() {
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const { email, password, username } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: "top-center",
+    });
+  const handleSuccess = (msg) =>
+    toast.success(msg, {
+      position: "top-center",
+    });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/register",
+        {
+          ...inputValue,
+        },
+        { withCredentials: true }
+      );
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        handleError(message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+      username: "",
+    });
+  };
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -8,18 +67,20 @@ function App() {
       </div>
 
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form action="#" method="POST" className="space-y-4">
+        <form onSubmit={handleSubmit} method="POST" className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+            <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
               Nama
             </label>
             <div className="mt-2">
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="username"
+                name="username"
+                type="text"
                 required
-                autoComplete="email"
+                value={username}
+                placeholder="Masukkan username"
+                onChange={handleOnChange}
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               />
             </div>
@@ -34,7 +95,9 @@ function App() {
                 name="email"
                 type="email"
                 required
-                autoComplete="email"
+                value={email}
+                placeholder="Masukkan email"
+                onChange={handleOnChange}
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               />
             </div>
@@ -51,7 +114,9 @@ function App() {
                 name="password"
                 type="password"
                 required
-                autoComplete="current-password"
+                value={password}
+                placeholder="Masukkan password"
+                onChange={handleOnChange}
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               />
             </div>
@@ -67,14 +132,15 @@ function App() {
           </div>
         </form>
         <p className="mt-2 text-center text-sm/6 text-gray-500">
-            Sudah punya akun?{' '}
-            <a href="#" className="font-semibold text-sky-700 hover:text-sky-600">
-              Masuk
-            </a>
-          </p>
+          Sudah punya akun?{" "}
+          <Link to={"/login"} className="font-semibold text-sky-700 hover:text-sky-600">
+            Masuk
+          </Link>
+        </p>
       </div>
+      <ToastContainer />
     </div>
   );
 }
 
-export default App;
+export default Register;
