@@ -1,48 +1,41 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/ptsgn_logo.png";
-import profile from "../assets/profile.png"
+import profile from "../assets/profile.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-
+import { Outlet } from "react-router-dom";
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
+  { name: "Dashboard", href: "/", current: true },
+  { name: "Cuti", href: "/cuti", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function Layout() {
   const navigate = useNavigate();
-  const [cookies, removeCookie] = useCookies([]);
+  const token = Cookies.get("token")
   const [username, setUsername] = useState("");
   useEffect(() => {
     const verifyCookie = async () => {
-      if (!cookies.token) {
+      if (!token) {
         navigate("/login");
+      } else {
+        const { data } = await axios.get("http://localhost:4000",  { withCredentials: true });
+        const { status, user } = data;
+        setUsername(user);
+        return status;
       }
-      const { data } = await axios.post("http://localhost:4000", {}, { withCredentials: true });
-      const { status, user } = data;
-      setUsername(user);
-      return status
-        ? toast.info(`Hello ${user}`, {
-            position: "top-right",
-          })
-        : (removeCookie("token"), navigate("/login"));
     };
     verifyCookie();
-  }, [cookies, navigate, removeCookie]);
-  const Logout = () => {
-    removeCookie("token");
+  }, [token, navigate]);
+  const logoutHandler = async () => {
+    await axios.get("http://localhost:4000/logout",  { withCredentials: true });
     navigate("/login");
   };
   return (
@@ -85,8 +78,8 @@ export default function Example() {
                       transition
                       className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                     >
-                      <MenuItem >
-                        <a onClick={Logout} className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden">
+                      <MenuItem>
+                        <a onClick={logoutHandler} className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden">
                           Logout
                         </a>
                       </MenuItem>
@@ -127,15 +120,12 @@ export default function Example() {
                 </div>
                 <div className="ml-3">
                   <div className="text-base/5 font-medium text-white">{username}</div>
-                  
                 </div>
               </div>
               <div className="mt-3 space-y-1 px-2">
-                
-                  <DisclosureButton as="a" onClick={Logout} className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
-                    Logout
-                  </DisclosureButton>
-              
+                <DisclosureButton as="a" onClick={logoutHandler} className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
+                  Logout
+                </DisclosureButton>
               </div>
             </div>
           </DisclosurePanel>
@@ -147,10 +137,11 @@ export default function Example() {
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <Outlet />
+          </div>
         </main>
       </div>
-      <ToastContainer />
     </>
   );
 }

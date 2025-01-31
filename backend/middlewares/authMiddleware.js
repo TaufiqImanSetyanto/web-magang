@@ -12,10 +12,18 @@ function userVerification(req, res) {
       return res.json({ status: false });
     } else {
       const user = await User.findById(data.id);
-      if (user) return res.json({ status: true, user: user.username });
+      if (user) return res.json({ status: true, user: user.username, role: user.role } );
       else return res.json({ status: false });
     }
   });
 }
 
-module.exports = userVerification;
+function roleVerification(req, res, next) {
+  const role = req.user.role;
+  if (role != "admin") {
+    return res.status(403).send("Access denied");
+  }
+  next();
+}
+
+module.exports = { roleVerification, userVerification };

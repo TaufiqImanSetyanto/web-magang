@@ -40,11 +40,20 @@ async function login(req, res, next) {
       withCredentials: true,
       httpOnly: false,
     });
-    res.status(201).json({ message: "User logged in successfully", success: true });
+    res.status(201).json({ message: "User logged in successfully", success: true, user });
+    next();
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function logout(req, res, next) {
+  try {
+    res.clearCookie("token")
+    res.status(200).json({ message: "User logged out successfully", success: true });
     next();
   } catch (error) {
     console.error(error);
   }
 }
 
-module.exports = { register, login };
+module.exports = { register, login, logout };
