@@ -3,8 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { useAuth } from "../contexts/authContext";
 
 function Register() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     username: "",
@@ -33,30 +35,31 @@ function Register() {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/register",
+        "http://localhost:4000/auth/register",
         {
           ...inputValue,
         },
         { withCredentials: true }
       );
-      const { success, message } = data;
+      const { success, message, user } = data;
       if (success) {
+        login(user);
         handleSuccess(message);
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 2000);
+        setInputValue({
+          ...inputValue,
+          email: "",
+          password: "",
+          username: "",
+        });
       } else {
         handleError(message);
       }
     } catch (error) {
       console.log(error);
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-      username: "",
-    });
   };
 
   return (

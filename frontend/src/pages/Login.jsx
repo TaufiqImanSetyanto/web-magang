@@ -3,8 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { useAuth } from "../contexts/authContext";
 
 function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     email: "",
@@ -32,29 +34,30 @@ function Login() {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/login",
+        "http://localhost:4000/auth/login",
         {
           ...inputValue,
         },
         { withCredentials: true }
       );
-      const { success, message } = data;
+      const { success, message, user } = data;
       if (success) {
+        login(user);
         handleSuccess(message);
         setTimeout(() => {
           navigate("/");
         }, 2000);
+        setInputValue({
+          ...inputValue,
+          email: "",
+          password: "",
+        });
       } else {
         handleError(message);
       }
     } catch (error) {
       console.log(error);
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -114,7 +117,7 @@ function Login() {
         </form>
         <p className="mt-6 text-center text-sm/6 text-gray-500">
           Belum punya akun?{" "}
-          <Link to={"/register"} className="font-semibold text-sky-700 hover:text-sky-600"> 
+          <Link to={"/register"} className="font-semibold text-sky-700 hover:text-sky-600">
             Buat akun disini
           </Link>
         </p>

@@ -3,15 +3,9 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/ptsgn_logo.png";
 import profile from "../assets/profile.png";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/authContext";
 import Cookies from "js-cookie";
-import axios from "axios";
-import { Outlet } from "react-router-dom";
-
-const navigation = [
-  { name: "Dashboard", href: "/", current: true },
-  { name: "Cuti", href: "/cuti", current: false },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -19,25 +13,39 @@ function classNames(...classes) {
 
 export default function Layout() {
   const navigate = useNavigate();
-  const token = Cookies.get("token")
-  const [username, setUsername] = useState("");
+  const { user, loading, logout } = useAuth();
+  const token = Cookies.get("token");
+  const [navigation, setNavigation] = useState([
+    { name: "Dashboard", href: "/", current: true },
+    { name: "Cuti", href: "/cuti", current: false },
+  ]);
+  const currentNav = navigation.find((item) => item.current);
+  const handleNavClick = (clickedHref) => {
+    setNavigation((prevNav) =>
+      prevNav.map((item) => ({
+        ...item,
+        current: item.href === clickedHref,
+      }))
+    );
+  };
   useEffect(() => {
-    const verifyCookie = async () => {
-      if (!token) {
-        navigate("/login");
-      } else {
-        const { data } = await axios.get("http://localhost:4000",  { withCredentials: true });
-        const { status, user } = data;
-        setUsername(user);
-        return status;
-      }
-    };
-    verifyCookie();
+    if (!token) {
+      navigate("/login");
+    }
+    setNavigation((prev) =>
+      prev.map((item) => ({
+        ...item,
+        current: item.href === window.location.pathname,
+      }))
+    );
   }, [token, navigate]);
   const logoutHandler = async () => {
-    await axios.get("http://localhost:4000/logout",  { withCredentials: true });
+    await logout();
     navigate("/login");
   };
+  if (loading) {
+    return <div>loading</div>;
+  }
   return (
     <>
       <div className="min-h-full">
@@ -48,23 +56,27 @@ export default function Layout() {
                 <div className="shrink-0">
                   <img alt="PT SGN" src={logo} className="size-8" />
                 </div>
+                <div className="md:hidden">
+                  <div className="ml-4 items-baseline space-x-4 text-white font-medium">{currentNav.name}</div>
+                </div>
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline space-x-4">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={item.href}
-                        aria-current={item.current ? "page" : undefined}
+                        to={item.href}
+                        onClick={() => handleNavClick(item.href)}
                         className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "rounded-md px-3 py-2 text-sm font-medium")}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="hidden md:block">
-                <div className="ml-4 flex items-center md:ml-6">
+              <div className="hidden md:flex items-center">
+                <div className="font-medium text-sm text-white">{user?.username || "Guest"}</div>
+                <div className="flex items-center">
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                     <div>
@@ -102,15 +114,15 @@ export default function Layout() {
           <DisclosurePanel className="md:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
               {navigation.map((item) => (
-                <DisclosureButton
+                <Link
                   key={item.name}
-                  as="a"
+                  to={item.href}
                   href={item.href}
-                  aria-current={item.current ? "page" : undefined}
+                  onClick={() => handleNavClick(item.href)}
                   className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "block rounded-md px-3 py-2 text-base font-medium")}
                 >
                   {item.name}
-                </DisclosureButton>
+                </Link>
               ))}
             </div>
             <div className="border-t border-gray-700 pt-4 pb-3">
@@ -119,7 +131,7 @@ export default function Layout() {
                   <img alt="" src={profile} className="size-10 rounded-full" />
                 </div>
                 <div className="ml-3">
-                  <div className="text-base/5 font-medium text-white">{username}</div>
+                  <div className="text-base/5 font-medium text-white">{user?.username || "Guest"}</div>
                 </div>
               </div>
               <div className="mt-3 space-y-1 px-2">
@@ -131,11 +143,6 @@ export default function Layout() {
           </DisclosurePanel>
         </Disclosure>
 
-        <header className="bg-white shadow-sm">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Selamat Datang, {username}!</h1>
-          </div>
-        </header>
         <main>
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <Outlet />
