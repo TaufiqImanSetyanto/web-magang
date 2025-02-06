@@ -5,6 +5,10 @@ const cutiSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  username:{
+    type: mongoose.Schema.Types.String,
+    ref: "User"
+  },
   jenisCuti: {
     type: String,
     enum: ["tahunan", "panjang"],

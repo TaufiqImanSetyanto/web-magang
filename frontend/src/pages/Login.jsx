@@ -44,9 +44,15 @@ function Login() {
       if (success) {
         login(user);
         handleSuccess(message);
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        if(user.role === "admin"){
+          setTimeout(() => {
+            navigate("/admin");
+          }, 2000);
+        } else {
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
         setInputValue({
           ...inputValue,
           email: "",

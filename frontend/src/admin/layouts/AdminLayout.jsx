@@ -1,22 +1,22 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import logo from "../assets/ptsgn_logo.png";
-import profile from "../assets/profile.png";
+import logo from "../../assets/ptsgn_logo.png";
+import profile from "../../assets/profile.png";
 import { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/authContext";
-import Loading from "../components/Loading"
+import { useAuth } from "../../contexts/authContext";
+import Loading from "../../components/Loading"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Layout() {
+export default function AdminLayout() {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuth();
   const [navigation, setNavigation] = useState([
-    { name: "Dashboard", href: "/", current: true },
-    { name: "Cuti", href: "/cuti", current: false },
+    { name: "Dashboard", href: "/admin", current: true },
+    { name: "Kelola Cuti", href: "/admin/kelolacuti", current: false },
   ]);
   const currentNav = navigation.find((item) => item.current);
   const handleNavClick = (clickedHref) => {

@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 export default function Cuti() {
   const { user } = useAuth();
   const userId = user?._id;
+  const username = user?.username
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState({
     jenisCuti: "tahunan",
@@ -37,6 +38,7 @@ export default function Cuti() {
     try {
       const { data } = await axios.post("http://localhost:4000/cuti/ambilcuti", {
         userId,
+        username,
         startDate,
         endDate,
         jenisCuti,
@@ -63,7 +65,7 @@ export default function Cuti() {
   };
   return (
     <>
-      <h2 className="font-bold text-lg text-gray-900">Permohonan Cuti</h2>
+      <h2 className="font-bold text-xl text-gray-900">Permohonan Cuti</h2>
       <form onSubmit={handleSubmit} method="POST">
         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-4">
