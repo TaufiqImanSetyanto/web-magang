@@ -3,14 +3,11 @@ const Cuti = require("../models/cutiModel");
 
 async function cuti(req, res) {
   try {
-    const { userId,username, startDate, endDate, jenisCuti, reason } = req.body;
+    const { userId, username, dates, jenisCuti, reason } = req.body;
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
+    const daysRequested = dates.length;
 
-    const daysRequested = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
-    if (daysRequested < 0) {
-      return res.json({ message: "Error days request" });
-    }
     if (jenisCuti === "tahunan" && user.hakCuti.tahunan < daysRequested) {
       return res.status(400).json({ message: "Sisa hak cuti tahunanmu 0" });
     }
@@ -18,7 +15,7 @@ async function cuti(req, res) {
       return res.status(400).json({ message: "Sisa hak cuti panjangmu 0" });
     }
 
-    const permohonanCuti = new Cuti({ userId,username, startDate, endDate, jenisCuti, daysRequested, reason });
+    const permohonanCuti = new Cuti({ userId, username, dates, jenisCuti, daysRequested, reason });
     await permohonanCuti.save();
 
     res.status(200).json({ message: "Permohonan cuti submitted", success: true });
@@ -29,11 +26,11 @@ async function cuti(req, res) {
 async function riwayatCuti(req, res) {
   try {
     const userId = req.params.id;
-    const cuti = await Cuti.find({ userId: userId })
-    if(!cuti){
-      res.status(404).json({message: "Tidak ada permohonan cuti"})
+    const cuti = await Cuti.find({ userId: userId });
+    if (!cuti) {
+      res.status(404).json({ message: "Tidak ada permohonan cuti" });
     }
-    res.status(200).json({success: true, cuti})
+    res.status(200).json({ success: true, cuti });
   } catch (error) {
     console.log(error);
   }

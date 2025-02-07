@@ -28,19 +28,26 @@ async function kelolaCuti(req, res) {
     if (cuti.status === "accepted") {
       const user = await User.findById(cuti.userId);
       if (!user) return res.status(404).json({ message: "User not found" });
-      if (cuti.jenisCuti === "tahunan" && user.hakCuti.tahunan >= cuti.daysRequested) {
+      if (cuti.jenisCuti === "tahunan") {
         user.hakCuti.tahunan -= cuti.daysRequested;
-      } else if (cuti.jenisCuti === "panjang" && user.hakCuti.panjang >= cuti.daysRequested) {
+      }
+      if (cuti.jenisCuti === "panjang") {
         user.hakCuti.panjang -= cuti.daysRequested;
-      } else {
-        return res.status(400).json({ message: "Hak cuti 0" });
       }
       await user.save();
     }
     res.status(200).json({ success: true, message: "Berhasil memperbarui status cuti" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Terjadi kesalahan server" });
   }
 }
-module.exports = { listCutiPending, kelolaCuti };
+async function listAllUser(req, res) {
+  try {
+    const allUser = await User.find({ role: "user" });
+    if (!allUser) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ success: true, allUser });
+  } catch (error) {
+    console.log(error);
+  }
+}
+module.exports = { listCutiPending, kelolaCuti, listAllUser };

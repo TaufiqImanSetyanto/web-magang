@@ -13,8 +13,7 @@ const cutiSchema = new mongoose.Schema({
     type: String,
     enum: ["tahunan", "panjang"],
   },
-  startDate: Date,
-  endDate: Date,
+  dates: Array,
   daysRequested: Number,
   reason: String,
   status: {

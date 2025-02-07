@@ -39,9 +39,13 @@ export default function AdminCuti() {
             <div key={cuti._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200 grid grid-cols-2">
               <div>
                 <p className="text-lg font-semibold text-gray-950">{cuti.username}</p>
-                <p className="text-gray-900 mb-2 text-md capitalize">Jenis cuti: {cuti.jenisCuti}</p>
-                <p className="text-gray-600 text-sm">Dari: {new Date(cuti.startDate).toLocaleDateString()}</p>
-                <p className="text-gray-600 text-sm">Sampai: {new Date(cuti.endDate).toLocaleDateString()}</p>
+                <p className="text-gray-900 mb-1 text-sm capitalize">Jenis cuti: {cuti.jenisCuti}</p>
+                <p className="text-gray-600 text-sm">Tanggal : </p>
+                {cuti.dates.map((date) => (
+                  <p key={date.id} className="text-gray-600 text-sm">
+                    {new Date(date.date).toLocaleDateString()}
+                  </p>
+                ))}
                 <p className="text-gray-800 mt-2 text-sm">Alasan: {cuti.reason}</p>
                 <div className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white bg-sky-600 mr-2">{cuti.daysRequested} Hari</div>
               </div>

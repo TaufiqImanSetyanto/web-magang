@@ -7,15 +7,14 @@ import { ToastContainer, toast } from "react-toastify";
 export default function Cuti() {
   const { user } = useAuth();
   const userId = user?._id;
-  const username = user?.username
+  const username = user?.username;
   const [loading, setLoading] = useState(false);
+  const [dates, setDates] = useState([{ id: Date.now(), date: "" }]);
   const [inputValue, setInputValue] = useState({
     jenisCuti: "tahunan",
-    startDate: "",
-    endDate: "",
     reason: "",
   });
-  const { jenisCuti, startDate, endDate, reason } = inputValue;
+  const { jenisCuti, reason } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -23,6 +22,18 @@ export default function Cuti() {
       [name]: value,
     });
   };
+  const handleDateChange = (id, value) => {
+    setDates(dates.map((item) => (item.id === id ? { ...item, date: value } : item)));
+  };
+
+  const handleAddDate = () => {
+    setDates([...dates, { id: Date.now(), date: "" }]);
+  };
+
+  const handleRemoveDate = (id) => {
+    setDates(dates.filter((item) => item.id !== id));
+  };
+
   const handleError = (err) =>
     toast.error(err, {
       position: "top-center",
@@ -39,8 +50,7 @@ export default function Cuti() {
       const { data } = await axios.post("http://localhost:4000/cuti/ambilcuti", {
         userId,
         username,
-        startDate,
-        endDate,
+        dates,
         jenisCuti,
         reason,
       });
@@ -50,10 +60,9 @@ export default function Cuti() {
         setInputValue({
           ...inputValue,
           jenisCuti: "tahunan",
-          startDate: "",
-          endDate: "",
           reason: "",
         });
+        setDates([{ id: Date.now(), date: "" }]);
       } else {
         handleError(message);
       }
@@ -69,37 +78,27 @@ export default function Cuti() {
       <form onSubmit={handleSubmit} method="POST">
         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-4">
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-4 flex">
+            <div className="">
               <label htmlFor="startdate" className="block text-sm/6 font-medium text-gray-900">
-                Tanggal Mulai
+                Tanggal Cuti
               </label>
-              <div className="mt-2">
-                <input
-                  id="startdate"
-                  name="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={handleOnChange}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                />
-              </div>
+              {dates.map((item, index) => (
+                <div key={item.id}>
+                  <div className="grid grid-cols-6 items-center gap-2 mt-2">
+                  <input type="date" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
+                  {index > 0 && (
+                    <button type="button" onClick={() => handleRemoveDate(item.id)} className="col-span-1 bg-red-500 text-white py-0.5 px-2 rounded">
+                      -
+                    </button>
+                  )}
+                </div>
+                </div>
+              ))}
+              <button type="button" onClick={handleAddDate} className="bg-green-500 text-white py-0.5 px-2 rounded mt-2">
+                +
+              </button>
             </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="enddate" className="block text-sm/6 font-medium text-gray-900">
-                Tanggal Berakhir
-              </label>
-              <div className="mt-2">
-                <input
-                  id="enddate"
-                  name="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={handleOnChange}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                />
-              </div>
             </div>
             <div className="sm:col-span-2">
               <label htmlFor="jeniscuti" className="block text-sm/6 font-medium text-gray-900">
@@ -111,7 +110,7 @@ export default function Cuti() {
                   name="jenisCuti"
                   value={jenisCuti}
                   onChange={handleOnChange}
-                  className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                 >
                   <option value={"tahunan"}>Tahunan</option>
                   <option value={"panjang"}>Panjang</option>
@@ -131,7 +130,7 @@ export default function Cuti() {
                   value={reason}
                   onChange={handleOnChange}
                   required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                 />
               </div>
             </div>
