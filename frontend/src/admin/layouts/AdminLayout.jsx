@@ -53,7 +53,7 @@ export default function AdminLayout() {
                   <img alt="PT SGN" src={logo} className="size-8" />
                 </div>
                 <div className="md:hidden">
-                  <div className="ml-4 items-baseline space-x-4 text-white font-medium">{currentNav.name}</div>
+                  <div className="ml-4 items-baseline space-x-4 text-white font-medium">{currentNav?.name}</div>
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline space-x-4">

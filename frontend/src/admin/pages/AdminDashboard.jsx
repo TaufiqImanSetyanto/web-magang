@@ -3,12 +3,13 @@ import axios from "axios";
 import Loading from "../../components/Loading";
 import profile from "../../assets/profile.png";
 import { PencilIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [allUser, setAllUser] = useState();
   useEffect(() => {
-    async function getAllUser() {
+    async function fetchAllUser() {
       try {
         const { data } = await axios.get("http://localhost:4000/admin/alluser");
         const { allUser } = data;
@@ -19,7 +20,7 @@ export default function AdminDashboard() {
         setLoading(false);
       }
     }
-    getAllUser();
+    fetchAllUser();
   }, []);
   return (
     <>
@@ -39,9 +40,9 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <button className="hover:cursor-pointer">
+                  <Link to={`edituser/${user._id}`}>
                     <PencilIcon className="size-5 m-1" />
-                  </button>
+                  </Link>
                 </div>
               </li>
             ))}

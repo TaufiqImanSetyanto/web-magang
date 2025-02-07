@@ -50,4 +50,26 @@ async function listAllUser(req, res) {
     console.log(error);
   }
 }
-module.exports = { listCutiPending, kelolaCuti, listAllUser };
+async function getUser(req, res) {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function editUser(req, res) {
+  try {
+    const { id } = req.params;
+    const { username, email, hakCuti } = req.body;
+    const user = await User.findByIdAndUpdate(id, { username, email, hakCuti }, { new: true });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({success: true ,message: "Berhasil memperbarui status cuti"})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser };

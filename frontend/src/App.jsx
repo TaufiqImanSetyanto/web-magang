@@ -10,6 +10,7 @@ import RoleBasedRoutes from "./utils/RoleBasedRoutes";
 import AdminDashboard from "./admin/pages/AdminDashboard"
 import AdminLayout from "./admin/layouts/AdminLayout"
 import AdminCuti from "./admin/pages/AdminCuti"
+import EditUser from "./admin/pages/EditUser"
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         >
            <Route index element={<AdminDashboard />} />
            <Route path="kelolacuti" element={<AdminCuti />} />
+           <Route path="edituser/:id" element={<EditUser/>} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized/>} />
         <Route path="*" element={<NotFound />} />

@@ -76,17 +76,17 @@ export default function Cuti() {
     <>
       <h2 className="font-bold text-xl text-gray-900">Permohonan Cuti</h2>
       <form onSubmit={handleSubmit} method="POST">
-        <div className="border-b border-gray-900/10 pb-12">
+        <div className="border-b border-gray-900/10 pb-6">
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-4">
             <div className="sm:col-span-4 flex">
             <div className="">
-              <label htmlFor="startdate" className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="dates" className="block text-sm/6 font-medium text-gray-900">
                 Tanggal Cuti
               </label>
               {dates.map((item, index) => (
                 <div key={item.id}>
                   <div className="grid grid-cols-6 items-center gap-2 mt-2">
-                  <input type="date" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
+                  <input type="date" id ="dates" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
                   {index > 0 && (
                     <button type="button" onClick={() => handleRemoveDate(item.id)} className="col-span-1 bg-red-500 text-white py-0.5 px-2 rounded">
                       -
@@ -137,7 +137,7 @@ export default function Cuti() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex justify-end">
           <button disabled={loading} type="submit" className="rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
             {loading ? <div className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div> : <div>Submit</div>}
           </button>
