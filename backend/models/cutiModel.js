@@ -18,7 +18,7 @@ const cutiSchema = new mongoose.Schema({
   reason: String,
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected"],
+    enum: ["pending", "accepted", "rejected"],
     default: "pending",
   },
 });
