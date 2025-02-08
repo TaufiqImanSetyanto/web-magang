@@ -17,6 +17,8 @@ export default function Layout() {
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/", current: true },
     { name: "Cuti", href: "/cuti", current: false },
+    { name: "Profile", href: "/profile", current: false },
+    
   ]);
   const currentNav = navigation.find((item) => item.current);
   const handleNavClick = (clickedHref) => {
