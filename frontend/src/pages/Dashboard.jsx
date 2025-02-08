@@ -39,12 +39,12 @@ export default function Dashboard() {
         cutiList.length > 0 ? (
           cutiList.map((cuti) => (
             <div key={cuti._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-              <p className="text-lg font-semibold text-gray-950 capitalize">{cuti.jenisCuti}</p>
-              <p className="text-gray-600 text-sm">Tanggal : </p>
+              <p className="text-gray-900 font-semibold text-lg/5 capitalize">{cuti.jenisCuti}</p>
+              <p className="text-gray-600 font-medium text-sm/6">Tanggal : </p>
               {cuti.dates.map((date)=> 
-                <p key={date.id} className="text-gray-600 text-sm">{new Date(date.date).toLocaleDateString()}</p>
+                <p key={date.id} className="text-gray-500 font-medium text-sm/6">{new Date(date.date).toLocaleDateString()}</p>
               )}
-              <p className="text-gray-800 mt-2 text-sm">Alasan: {cuti.reason}</p>
+              <p className="text-gray-600 font-medium mt-2 text-sm/4">Alasan: {cuti.reason}</p>
               <div className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white bg-sky-600 mr-2">{cuti.daysRequested} Hari</div>
               <div className={`inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white capitalize ${statusColors[cuti.status]}`}>{cuti.status}</div>
             </div>

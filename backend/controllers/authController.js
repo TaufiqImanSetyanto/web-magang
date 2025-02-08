@@ -4,12 +4,12 @@ const bcrypt = require("bcrypt");
 
 async function register(req, res) {
   try {
-    const { email, password, username } = req.body;
+    const { email, password, bagian, username } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.json({ message: "User already exists" });
     }
-    const user = new User({ email, password, username });
+    const user = new User({ email, password, bagian, username });
     user.password = await bcrypt.hash(password, 12);
     await user.save();
 
