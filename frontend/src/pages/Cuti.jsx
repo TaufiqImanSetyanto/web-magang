@@ -86,7 +86,7 @@ export default function Cuti() {
               {dates.map((item, index) => (
                 <div key={item.id}>
                   <div className="grid grid-cols-6 items-center gap-2 mt-2">
-                  <input type="date" id ="dates" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
+                  <input type="date" id ="dates" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
                   {index > 0 && (
                     <button type="button" onClick={() => handleRemoveDate(item.id)} className="col-span-1 bg-red-500 text-white py-0.5 px-2 rounded">
                       -
@@ -110,7 +110,7 @@ export default function Cuti() {
                   name="jenisCuti"
                   value={jenisCuti}
                   onChange={handleOnChange}
-                  className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                 >
                   <option value={"tahunan"}>Tahunan</option>
                   <option value={"panjang"}>Panjang</option>
@@ -130,7 +130,8 @@ export default function Cuti() {
                   value={reason}
                   onChange={handleOnChange}
                   required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  maxLength="65"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                 />
               </div>
             </div>

@@ -1,24 +1,38 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/authContext";
-import Loading from "../components/Loading"
+import Loading from "../components/Loading";
 import { statusColors } from "../utils/StatusColors";
+import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
+import { useTheme } from "@table-library/react-table-library/theme";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { getTheme } from "../utils/UserThemeTable";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const userId = user?._id;
   const [cutiList, setCutiList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterJenis, setFilterJenis] = useState("");
+  const [filterTahun, setFilterTahun] = useState("");
+
+  const filteredCutiList = cutiList.filter((cuti) => {
+    const tahunCuti = new Date(cuti.dates[0]?.date).getFullYear().toString();
+    return (filterJenis ? cuti.jenisCuti === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
+  });
+
+  const data = { nodes: filteredCutiList };
+  const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchCuti() {
       try {
-        setLoading(true)
+        setLoading(true);
         const { data } = await axios.get(`http://localhost:4000/cuti/riwayatcuti/${userId}`);
         setCutiList(data.cuti.reverse());
       } catch (error) {
         console.error("Error fetching cuti list:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
     fetchCuti();
@@ -26,33 +40,71 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:col-start-2 gap-4">
-      <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-center mb-3">
-        <p className="text-lg font-semibold text-gray-950">Sisa hak cuti</p>
-        <p className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded text-white bg-sky-600 mr-2">Tahunan : {user.hakCuti.tahunan} Hari</p>
-        <p className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded text-white bg-sky-600 mr-2">Panjang : {user.hakCuti.panjang} Hari</p>
-      </div>
-      </div>
       <h2 className="text-xl font-bold text-gray-900 mb-4">Riwayat Cuti</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? <Loading/> :(
-        cutiList.length > 0 ? (
-          cutiList.map((cuti) => (
-            <div key={cuti._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-              <p className="text-gray-900 font-semibold text-lg/5 capitalize">{cuti.jenisCuti}</p>
-              <p className="text-gray-600 font-medium text-sm/6">Tanggal : </p>
-              {cuti.dates.map((date)=> 
-                <p key={date.id} className="text-gray-500 font-medium text-sm/6">{new Date(date.date).toLocaleDateString()}</p>
-              )}
-              <p className="text-gray-600 font-medium mt-2 text-sm/4">Alasan: {cuti.reason}</p>
-              <div className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white bg-sky-600 mr-2">{cuti.daysRequested} Hari</div>
-              <div className={`inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white capitalize ${statusColors[cuti.status]}`}>{cuti.status}</div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-600">Tidak ada data cuti.</p>
-        ))}
+      <div>
+        <h3 className="block text-md/6 font-medium text-gray-900">Filter</h3>
+        <div className="mt-1 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-12 gap-2">
+          <select
+            value={filterJenis}
+            onChange={(e) => setFilterJenis(e.target.value)}
+            className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+          >
+            <option value={""}>Jenis</option>
+            <option value={"tahunan"}>Tahunan</option>
+            <option value={"panjang"}>Panjang</option>
+          </select>
+          <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+          <select
+            value={filterTahun}
+            onChange={(e) => setFilterTahun(e.target.value)}
+            className="col-start-2 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+          >
+            <option value={""}>Tahun</option>
+            {[...new Set(cutiList.map((cuti) => new Date(cuti.dates[0]?.date).getFullYear().toString()))].map((tahun) => (
+              <option key={tahun} value={tahun}>
+                {tahun}
+              </option>
+            ))}
+          </select>
+          <ChevronDownIcon className="pointer-events-none col-start-2 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+        </div>
       </div>
+      {loading ? (
+        <Loading />
+      ) : cutiList.length > 0 ? (
+        <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
+          {(tableList) => (
+            <>
+              <Header>
+                <HeaderRow>
+                  <HeaderCell>Jenis Cuti</HeaderCell>
+                  <HeaderCell>Tanggal</HeaderCell>
+                  <HeaderCell>Alasan</HeaderCell>
+                  <HeaderCell>Durasi</HeaderCell>
+                  <HeaderCell>Status</HeaderCell>
+                </HeaderRow>
+              </Header>
+              <Body>
+                {tableList.map((cuti) => (
+                  <Row key={cuti._id} item={cuti}>
+                    <Cell className="capitalize">{cuti.jenisCuti}</Cell>
+                    <Cell>
+                      {cuti.dates.map((date) => (
+                        <div key={date.id}>{new Date(date.date).toLocaleDateString()}</div>
+                      ))}
+                    </Cell>
+                    <Cell>{cuti.reason}</Cell>
+                    <Cell>{cuti.daysRequested} Hari</Cell>
+                    <Cell className={statusColors[cuti.status]}>{cuti.status}</Cell>
+                  </Row>
+                ))}
+              </Body>
+            </>
+          )}
+        </Table>
+      ) : (
+        <p className="text-gray-600">Tidak ada data cuti.</p>
+      )}
     </div>
   );
 }

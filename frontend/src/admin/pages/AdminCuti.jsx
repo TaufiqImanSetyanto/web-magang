@@ -2,10 +2,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Loading from "../../components/Loading";
 import { statusColors } from "../../utils/StatusColors";
+import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
+import { useTheme } from "@table-library/react-table-library/theme";
+import { getTheme } from "../../utils/AdminThemeTable";
 
 export default function AdminCuti() {
   const [cutiPendingList, setCutiPendingList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const data = { nodes: cutiPendingList };
+  const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchCutiPending() {
       try {
@@ -34,41 +39,47 @@ export default function AdminCuti() {
       {loading ? (
         <Loading />
       ) : cutiPendingList.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cutiPendingList.map((cuti) => (
-            <div key={cuti._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200 grid grid-cols-2">
-              <div>
-                <p className="text-lg/6 font-semibold text-gray-950">{cuti.username}</p>
-                <p className="text-gray-700 font-semibold text-sm/5 capitalize">Jenis cuti : {cuti.jenisCuti}</p>
-                <p className="text-gray-600 font-medium text-sm/6">Tanggal : </p>
-                {cuti.dates.map((date) => (
-                  <p key={date.id} className="text-gray-500 font-medium text-sm/6">
-                    {new Date(date.date).toLocaleDateString()}
-                  </p>
+        <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
+          {(tableList) => (
+            <>
+              <Header>
+                <HeaderRow>
+                  <HeaderCell>Nama</HeaderCell>
+                  <HeaderCell>Jenis Cuti</HeaderCell>
+                  <HeaderCell>Tanggal</HeaderCell>
+                  <HeaderCell>Alasan</HeaderCell>
+                  <HeaderCell>Durasi</HeaderCell>
+                  <HeaderCell>Aksi</HeaderCell>
+                </HeaderRow>
+              </Header>
+              <Body>
+                {tableList.map((cuti) => (
+                  <Row key={cuti._id} item={cuti}>
+                    <Cell>{cuti.username}</Cell>
+                    <Cell className="capitalize">{cuti.jenisCuti}</Cell>
+                    <Cell>
+                      {cuti.dates.map((date) => (
+                        <div key={date.id}>{new Date(date.date).toLocaleDateString()}</div>
+                      ))}
+                    </Cell>
+                    <Cell>{cuti.reason}</Cell>
+                    <Cell>{cuti.daysRequested} Hari</Cell>
+                    <Cell>
+                      <div className="grid grid-flow-col gap-2">
+                        <button onClick={() => handleDecision(cuti._id, "accepted")} className={`hover:cursor-pointer hover:bg-green-600 hover:text-white border rounded text-sm  ${statusColors["accepted"]}`}>
+                          Accept
+                        </button>
+                        <button onClick={() => handleDecision(cuti._id, "rejected")} className={`hover:cursor-pointer hover:bg-red-600 hover:text-white border rounded text-sm  ${statusColors["rejected"]}`}>
+                          Reject
+                        </button>
+                      </div>{" "}
+                    </Cell>
+                  </Row>
                 ))}
-                <p className="text-gray-600 font-medium mt-2 text-sm/4">Alasan : {cuti.reason}</p>
-                <div className="inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white bg-sky-600 mr-2">{cuti.daysRequested} Hari</div>
-              </div>
-              <div className="flex flex-col justify-end">
-                <div className="text-center">
-                  <p className="font-medium text-gray-800 text-lg/5">Aksi</p>
-                  <button
-                    onClick={() => handleDecision(cuti._id, "accepted")}
-                    className={`hover:cursor-pointer hover:bg-green-700 inline-block mt-3 mr-3 px-3 py-1 text-xs font-medium rounded-full text-white capitalize ${statusColors["accepted"]}`}
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleDecision(cuti._id, "rejected")}
-                    className={`hover:cursor-pointer hover:bg-red-700 inline-block mt-3 px-3 py-1 text-xs font-medium rounded-full text-white capitalize ${statusColors["rejected"]}`}
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              </Body>
+            </>
+          )}
+        </Table>
       ) : (
         <p className="text-gray-600">Tidak ada data pengajuan cuti.</p>
       )}
