@@ -12,11 +12,11 @@ function Register() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     username: "",
-    email: "",
+    NIK: "",
     bagian: "Keuangan & Umum",
     password: "",
   });
-  const { email, password, bagian, username } = inputValue;
+  const { NIK, password, bagian, username } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -53,7 +53,7 @@ function Register() {
         }, 2000);
         setInputValue({
           ...inputValue,
-          email: "",
+          NIK: "",
           password: "",
           bagian: "Keuangan & Umum",
           username: "",
@@ -93,17 +93,17 @@ function Register() {
             </div>
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-              Email
+            <label htmlFor="NIK" className="block text-sm/6 font-medium text-gray-900">
+              NIK
             </label>
             <div className="mt-2">
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="NIK"
+                name="NIK"
+                type="text"
                 required
-                value={email}
-                placeholder="Masukkan email"
+                value={NIK}
+                placeholder="Masukkan NIK"
                 onChange={handleOnChange}
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               />

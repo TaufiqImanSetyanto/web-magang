@@ -37,7 +37,7 @@ export default function AdminDashboard() {
                   <div className="min-w-0 flex-auto">
                     <p className="text-sm/6 font-semibold text-gray-950">{user.username}</p>
                     <p className="text-xs/3 font-semibold text-gray-700">{user.bagian}</p>
-                    <p className="mt-1 truncate text-xs/5 text-gray-500">{user.email}</p>
+                    <p className="mt-1 truncate text-xs/5 text-gray-500">{user.NIK}</p>
                   </div>
                 </div>
                 <div className="flex justify-end">

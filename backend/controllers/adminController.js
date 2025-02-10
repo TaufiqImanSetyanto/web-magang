@@ -71,10 +71,10 @@ async function getUser(req, res) {
 async function editUser(req, res) {
   try {
     const { id } = req.params;
-    const { username, email, bagian, hakCuti } = req.body;
-    const user = await User.findByIdAndUpdate(id, { username, email, bagian, hakCuti }, { new: true });
+    const { username, NIK, bagian, tahunPengangkatan, hakCuti } = req.body;
+    const user = await User.findByIdAndUpdate(id, { username, NIK, bagian, tahunPengangkatan, hakCuti }, { new: true });
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.status(200).json({ success: true, message: "Berhasil memperbarui status cuti" });
+    res.status(200).json({ success: true, message: "Berhasil memperbarui user" });
   } catch (error) {
     console.log(error);
   }

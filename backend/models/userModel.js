@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  email: {
+  NIK: {
     type: String,
-    required: [true, "Your email address is required"],
+    required: [true, "Your NIK is required"],
     unique: true,
   },
   username: {
@@ -47,10 +47,14 @@ const userSchema = new mongoose.Schema({
       "Pengolahan - ST. Puteran",
       "Pengolahan - ST. Limbah",
       "Pengolahan - ST. Pengemasan",
-      "Lain-lain"
+      "Lain-lain",
     ],
     default: "Keuangan & Umum",
     required: [true, "Your department is required"],
+  },
+  tahunPengangkatan: {
+    type: String,
+    default: "2000",
   },
   role: {
     type: String,

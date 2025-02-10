@@ -9,12 +9,13 @@ export default function EditUser() {
   const { id } = useParams();
   const [user, setUser] = useState({
     username: "",
-    email: "",
+    NIK: "",
     hakCuti: {
       tahunan: 0,
       panjang: 0,
     },
     bagian: "",
+    tahunPengangkatan: "",
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -83,14 +84,14 @@ export default function EditUser() {
                 />
               </div>
               <div className="mb-1">
-                <label htmlFor="email" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Email
+                <label htmlFor="NIK" className="mb-2 block text-sm/6 font-medium text-gray-900">
+                  NIK
                 </label>
                 <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={user.email}
+                  id="NIK"
+                  type="text"
+                  name="NIK"
+                  value={user.NIK}
                   onChange={handleOnChange}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                   required
@@ -116,6 +117,20 @@ export default function EditUser() {
                   </select>
                   <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
                 </div>
+              </div>
+              <div className="mb-1">
+                <label htmlFor="tahunPengangkatan" className="mb-2 block text-sm/6 font-medium text-gray-900">
+                  Tahun Pengangkatan
+                </label>
+                <input
+                  id="tahunPengangkatan"
+                  type="text"
+                  name="tahunPengangkatan"
+                  value={user.tahunPengangkatan}
+                  onChange={handleOnChange}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  required
+                />
               </div>
               <div className="mb-1">
                 <label htmlFor="cutitahunan" className="mb-2 block text-sm/6 font-medium text-gray-900">

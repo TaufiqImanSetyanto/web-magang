@@ -4,12 +4,12 @@ const bcrypt = require("bcrypt");
 
 async function register(req, res) {
   try {
-    const { email, password, bagian, username } = req.body;
-    const existingUser = await User.findOne({ email });
+    const { NIK, password, bagian, username } = req.body;
+    const existingUser = await User.findOne({ NIK });
     if (existingUser) {
       return res.json({ message: "User already exists" });
     }
-    const user = new User({ email, password, bagian, username });
+    const user = new User({ NIK, password, bagian, username });
     user.password = await bcrypt.hash(password, 12);
     await user.save();
 
@@ -25,13 +25,13 @@ async function register(req, res) {
 }
 async function login(req, res) {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const { NIK, password } = req.body;
+    if (!NIK || !password) {
       return res.json({ message: "All fields are required" });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ NIK });
     if (!user) {
-      return res.json({ message: "Incorrect email" });
+      return res.json({ message: "Incorrect NIK" });
     }
     const auth = await bcrypt.compare(password, user.password);
     if (!auth) {
