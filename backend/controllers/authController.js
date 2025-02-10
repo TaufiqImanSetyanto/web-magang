@@ -33,8 +33,8 @@ async function login(req, res) {
     if (!user) {
       return res.json({ message: "Incorrect NIK" });
     }
-    const auth = await bcrypt.compare(password, user.password);
-    if (!auth) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.json({ message: "Incorrect password" });
     }
     const token = createSecretToken(user._id);
@@ -55,5 +55,22 @@ async function logout(req, res) {
     console.error(error);
   }
 }
+async function changePassword(req, res) {
+  try {
+    const { id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-module.exports = { register, login, logout };
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.json({ message: "Password lama salah" });
+
+    user.password = await bcrypt.hash(newPassword, 12);
+    await user.save();
+    res.status(200).json({ success: true, message: "Password berhasil diperbarui" });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { register, login, logout, changePassword };
