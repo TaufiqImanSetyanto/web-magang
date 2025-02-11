@@ -12,6 +12,7 @@ import AdminLayout from "./admin/layouts/AdminLayout"
 import AdminCuti from "./admin/pages/AdminCuti"
 import EditUser from "./admin/pages/EditUser"
 import Profile from "./pages/Profile";
+import RiwayatCuti from "./admin/pages/RiwayatCuti";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         >
            <Route index element={<AdminDashboard />} />
            <Route path="kelolacuti" element={<AdminCuti />} />
+           <Route path="riwayatcuti" element={<RiwayatCuti/>}/>
            <Route path="edituser/:id" element={<EditUser/>} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized/>} />

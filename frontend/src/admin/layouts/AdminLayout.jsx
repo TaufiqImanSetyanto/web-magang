@@ -17,6 +17,7 @@ export default function AdminLayout() {
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/admin", current: true },
     { name: "Kelola Cuti", href: "/admin/kelolacuti", current: false },
+    { name: "Riwayat Cuti", href: "/admin/riwayatcuti", current: false },
   ]);
   const currentNav = navigation.find((item) => item.current);
   const handleNavClick = (clickedHref) => {

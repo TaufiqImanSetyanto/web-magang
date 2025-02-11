@@ -21,7 +21,7 @@ export default function EditUser() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const { data } = await axios.get(`http://localhost:4000/admin/edituser/${id}`);
+        const { data } = await axios.get(`http://localhost:4000/admin/user/${id}`);
         const { user } = data;
         setUser(user);
       } catch (error) {

@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const { listCutiPending, kelolaCuti, listAllUser, getUser, editUser } = require("../controllers/adminController");
+const { listCutiPending, kelolaCuti, listAllUser, getUser, editUser, getAcceptedCuti } = require("../controllers/adminController");
 
 router.put("/kelolacuti/:id", kelolaCuti);
 router.get("/listcuti", listCutiPending);
 router.get("/alluser", listAllUser);
-router.get("/edituser/:id", getUser);
-router.put("/edituser/:id", editUser)
+router.get("/user/:id", getUser);
+router.put("/edituser/:id", editUser);
+router.get("/riwayatcuti", getAcceptedCuti)
 module.exports = router;

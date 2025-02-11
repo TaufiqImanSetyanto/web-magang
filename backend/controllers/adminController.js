@@ -80,4 +80,14 @@ async function editUser(req, res) {
   }
 }
 
-module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser };
+async function getAcceptedCuti(req,res){
+  try {
+    const acceptedCuti = await Cuti.find({status: "accepted"})
+    if (!acceptedCuti) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ success: true, acceptedCuti });
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser,getAcceptedCuti };
