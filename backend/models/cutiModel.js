@@ -9,10 +9,7 @@ const cutiSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.String,
     ref: "User"
   },
-  jenisCuti: {
-    type: String,
-    enum: ["tahunan", "panjang"],
-  },
+  jenisCuti: String,
   dates: Array,
   daysRequested: Number,
   reason: String,

@@ -14,6 +14,10 @@ export default function EditUser() {
       tahunan: 0,
       panjang: 0,
     },
+    tahunCuti: {
+      tahunan: "",
+      panjang: "",
+    },
     bagian: "",
     tahunPengangkatan: "",
   });
@@ -43,6 +47,15 @@ export default function EditUser() {
           [key]: Number(value),
         },
       });
+    } else if (name.startsWith("tahunCuti.")) {
+      const key = name.split(".")[1];
+      setUser({
+        ...user,
+        tahunCuti: {
+          ...user.tahunCuti,
+          [key]: String(value),
+        },
+      });
     } else {
       setUser({
         ...user,
@@ -53,7 +66,6 @@ export default function EditUser() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      console.log(user)
       await axios.put(`http://localhost:4000/admin/edituser/${id}`, user);
     } catch (error) {
       console.log(error);
@@ -155,6 +167,34 @@ export default function EditUser() {
                   type="number"
                   name="hakCuti.panjang"
                   value={user.hakCuti.panjang}
+                  onChange={handleOnChange}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  required
+                />
+              </div>
+              <div className="mb-1">
+                <label htmlFor="tahuncutitahunan" className="mb-2 block text-sm/6 font-medium text-gray-900">
+                  Tahun Cuti Tahunan
+                </label>
+                <input
+                  id="tahuncutitahunan"
+                  type="text"
+                  name="tahunCuti.tahunan"
+                  value={user.tahunCuti.tahunan}
+                  onChange={handleOnChange}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  required
+                />
+              </div>
+              <div className="mb-1">
+                <label htmlFor="tahuncutipanjang" className="mb-2 block text-sm/6 font-medium text-gray-900">
+                  Tahun Cuti Panjang
+                </label>
+                <input
+                  id="tahuncutipanjang"
+                  type="text"
+                  name="tahunCuti.panjang"
+                  value={user.tahunCuti.panjang}
                   onChange={handleOnChange}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                   required

@@ -28,15 +28,15 @@ async function kelolaCuti(req, res) {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (status === "accepted") {
-      if ((cuti.jenisCuti === "tahunan" && user.hakCuti.tahunan < cuti.daysRequested) || (cuti.jenisCuti === "panjang" && user.hakCuti.panjang < cuti.daysRequested)) {
+      if ((cuti.jenisCuti.startsWith("panjang") && user.hakCuti.panjang < cuti.daysRequested) || (cuti.jenisCuti.startsWith("tahunan") && user.hakCuti.tahunan < cuti.daysRequested)) {
         return res.status(400).json({ message: "Sisa hak cuti tidak mencukupi" });
       }
 
-      if (cuti.jenisCuti === "tahunan") {
-        user.hakCuti.tahunan -= cuti.daysRequested;
-      }
-      if (cuti.jenisCuti === "panjang") {
+      if (cuti.jenisCuti.startsWith("panjang")) {
         user.hakCuti.panjang -= cuti.daysRequested;
+      }
+      if (cuti.jenisCuti.startsWith("tahunan")) {
+        user.hakCuti.tahunan -= cuti.daysRequested;
       }
 
       await user.save();
@@ -71,8 +71,8 @@ async function getUser(req, res) {
 async function editUser(req, res) {
   try {
     const { id } = req.params;
-    const { username, NIK, bagian, tahunPengangkatan, hakCuti } = req.body;
-    const user = await User.findByIdAndUpdate(id, { username, NIK, bagian, tahunPengangkatan, hakCuti }, { new: true });
+    const { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti } = req.body;
+    const user = await User.findByIdAndUpdate(id, { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti }, { new: true });
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, message: "Berhasil memperbarui user" });
   } catch (error) {
@@ -80,14 +80,14 @@ async function editUser(req, res) {
   }
 }
 
-async function getAcceptedCuti(req,res){
+async function getAcceptedCuti(req, res) {
   try {
-    const acceptedCuti = await Cuti.find({status: "accepted"})
+    const acceptedCuti = await Cuti.find({ status: "accepted" });
     if (!acceptedCuti) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, acceptedCuti });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
-module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser,getAcceptedCuti };
+module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser, getAcceptedCuti };

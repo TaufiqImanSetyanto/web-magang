@@ -17,7 +17,7 @@ export default function RiwayatCuti() {
 
   const filteredCutiList = cutiList.filter((cuti) => {
     const tahunCuti = new Date(cuti.dates[0]?.date).getFullYear().toString();
-    return (filterJenis ? cuti.jenisCuti === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
+    return (filterJenis ? cuti.jenisCuti.split(' ')[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
   });
 
   const data = { nodes: filteredCutiList };

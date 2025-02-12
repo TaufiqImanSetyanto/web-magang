@@ -15,7 +15,14 @@ async function cuti(req, res) {
       return res.status(400).json({ message: "Sisa hak cuti panjangmu 0" });
     }
 
-    const permohonanCuti = new Cuti({ userId, username, dates, jenisCuti, daysRequested, reason });
+    const permohonanCuti = new Cuti({
+      userId,
+      username,
+      dates,
+      jenisCuti: jenisCuti === "panjang" ? `panjang ${user.tahunCuti.panjang}` : `tahunan ${user.tahunCuti.tahunan}`,
+      daysRequested,
+      reason,
+    });
     await permohonanCuti.save();
 
     res.status(200).json({ message: "Permohonan cuti submitted", success: true });
