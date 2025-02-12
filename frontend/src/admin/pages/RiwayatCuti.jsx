@@ -53,7 +53,7 @@ export default function RiwayatCuti() {
       <h2 className="text-xl font-bold text-gray-900 mb-4">Riwayat Cuti yang di Setujui</h2>
       <div>
         <h3 className="block text-md/6 font-medium text-gray-900">Filter</h3>
-        <div className="mt-1 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-12 gap-2">
+        <div className="mt-1 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-2">
           <select
             value={filterJenis}
             onChange={(e) => setFilterJenis(e.target.value)}

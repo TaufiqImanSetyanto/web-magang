@@ -1,11 +1,11 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/ptsgn_logo.png";
 import profile from "../assets/profile.png";
 import { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import Loading from "../components/Loading"
+import Loading from "../components/Loading";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -14,13 +14,13 @@ function classNames(...classes) {
 export default function Layout() {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/", current: true },
     { name: "Cuti", href: "/cuti", current: false },
     { name: "Profile", href: "/profile", current: false },
-    
   ]);
-  const currentNav = navigation.find((item) => item.current);
+
   const handleNavClick = (clickedHref) => {
     setNavigation((prevNav) =>
       prevNav.map((item) => ({
@@ -28,7 +28,9 @@ export default function Layout() {
         current: item.href === clickedHref,
       }))
     );
+    setSidebarOpen(false);
   };
+
   useEffect(() => {
     setNavigation((prev) =>
       prev.map((item) => ({
@@ -37,112 +39,99 @@ export default function Layout() {
       }))
     );
   }, [navigate]);
+
   const logoutHandler = async () => {
     await logout();
     navigate("/login");
   };
+
   if (loading) {
-    return <Loading/>;
+    return <Loading />;
   }
+
   return (
     <>
-      <div className="min-h-full">
-        <Disclosure as="nav" className="bg-sky-900">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
-              <div className="flex items-center">
-                <div className="shrink-0">
-                  <img alt="PT SGN" src={logo} className="size-8" />
-                </div>
-                <div className="md:hidden">
-                  <div className="ml-4 items-baseline space-x-4 text-white font-medium">{currentNav.name}</div>
-                </div>
-                <div className="hidden md:block">
-                  <div className="ml-10 flex items-baseline space-x-4">
-                    {navigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        onClick={() => handleNavClick(item.href)}
-                        className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "rounded-md px-3 py-2 text-sm font-medium")}
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+      <Dialog as="div" className="relative z-50 lg:hidden" open={sidebarOpen} onClose={setSidebarOpen}>
+        <DialogBackdrop className="fixed inset-0 bg-gray-900/80" />
+
+        <div className="fixed inset-0 flex max-w-full">
+          <DialogPanel className="relative mr-16 flex w-screen max-w-mdy flex-1">
+            <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
+              <button type="button" className="-m-2 p-2 text-white" onClick={() => setSidebarOpen(false)}>
+                <span className="sr-only">Close sidebar</span>
+                <XMarkIcon className="size-6" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="flex grow flex-col gap-y-3 overflow-y-auto bg-sky-900 px-6 pb-4">
+              <div className="flex h-14 mt-2 shrink-0 items-center justify-center">
+                <img className="size-10" src={logo} alt="PT SGN" />
+                <p className="text-white font-bold">PT SGN - PG SRAGI</p>
               </div>
-              <div className="hidden md:flex items-center">
-                <div className="font-medium text-sm text-white">{user?.username || "Guest"}</div>
-                <div className="flex items-center">
-                  {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3">
-                    <div>
-                      <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-100 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">Open user menu</span>
-                        <img alt="" src={profile} className="size-8 rounded-full" />
-                      </MenuButton>
-                    </div>
-                    <MenuItems
-                      transition
-                      className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                    >
-                      <MenuItem>
-                        <a onClick={logoutHandler} className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden">
-                          Logout
-                        </a>
-                      </MenuItem>
-                    </MenuItems>
-                  </Menu>
-                </div>
+              <div className="flex gap-1 flex-col">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => handleNavClick(item.href)}
+                    className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                <button onClick={logoutHandler} className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-300 hover:bg-sky-950 hover:text-white">
+                  Logout
+                </button>
               </div>
-              <div className="-mr-2 flex md:hidden">
-                {/* Mobile menu button */}
-                <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md bg-sky-900 p-2 text-white hover:bg-sky-950 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-sky-900 focus:outline-hidden">
-                  <span className="absolute -inset-0.5" />
-                  <span className="sr-only">Open main menu</span>
-                  <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
-                  <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
-                </DisclosureButton>
-              </div>
+            </div>
+          </DialogPanel>
+        </div>
+      </Dialog>
+
+      {/* Static sidebar for desktop */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col gap-y-3 overflow-y-auto bg-sky-900 px-6 pb-4">
+          <div className="flex h-16 shrink-0 items-center justify-center">
+            <img className="size-10" src={logo} alt="PT SGN" />
+            <p className="text-white font-bold">PT SGN - PG SRAGI</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => handleNavClick(item.href)}
+                className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            <button onClick={logoutHandler} className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-300 hover:bg-sky-950 hover:text-white">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="lg:pl-72">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+          <button type="button" className="-m-2.5 p-2.5 text-gray-700 lg:hidden" onClick={() => setSidebarOpen(true)}>
+            <span className="sr-only">Open sidebar</span>
+            <Bars3Icon className="size-6" aria-hidden="true" />
+          </button>
+
+          <div className="flex flex-1 self-stretch justify-end">
+            <div className="flex items-center">
+              <span className="text-sm font-medium text-gray-700">{user?.username || "Guest"}</span>
+              <img className="ml-3 size-8 rounded-full" src={profile} alt="" />
             </div>
           </div>
+        </div>
 
-          <DisclosurePanel className="md:hidden">
-            <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  href={item.href}
-                  onClick={() => handleNavClick(item.href)}
-                  className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "block rounded-md px-3 py-2 text-base font-medium")}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-            <div className="border-t border-gray-700 pt-4 pb-3">
-              <div className="flex items-center px-5">
-                <div className="shrink-0">
-                  <img alt="" src={profile} className="size-10 rounded-full" />
-                </div>
-                <div className="ml-3">
-                  <div className="text-base/5 font-medium text-white">{user?.username || "Guest"}</div>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1 px-2">
-                <DisclosureButton as="a" onClick={logoutHandler} className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
-                  Logout
-                </DisclosureButton>
-              </div>
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
-
-        <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <main className="py-4">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Outlet />
           </div>
         </main>
