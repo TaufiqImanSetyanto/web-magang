@@ -1,14 +1,13 @@
 const User = require("../models/userModel");
 const Cuti = require("../models/cutiModel");
 
-async function listCutiPending(req, res, next) {
+async function listCutiPending(req, res) {
   try {
     const cutiPending = await Cuti.find({ status: "pending" });
     if (!cutiPending) {
       res.status(404).json({ message: "Tidak ada yang mengajukan cuti" });
     }
     res.status(200).json({ success: true, cutiPending });
-    next();
   } catch (error) {
     console.log(error);
   }
@@ -38,7 +37,6 @@ async function kelolaCuti(req, res) {
       if (cuti.jenisCuti.startsWith("tahunan")) {
         user.hakCuti.tahunan -= cuti.daysRequested;
       }
-
       await user.save();
     }
 

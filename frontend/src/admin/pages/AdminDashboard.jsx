@@ -15,7 +15,7 @@ export default function AdminDashboard() {
         const { allUser } = data;
         setAllUser(allUser);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching all user", error);
       } finally {
         setLoading(false);
       }

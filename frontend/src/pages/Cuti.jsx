@@ -2,7 +2,9 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/authContext";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
+import Input from "../components/Input";
 
 export default function Cuti() {
   const { user } = useAuth();
@@ -34,15 +36,6 @@ export default function Cuti() {
     setDates(dates.filter((item) => item.id !== id));
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "top-center",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "top-center",
-    });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -67,7 +60,8 @@ export default function Cuti() {
         handleError(message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -79,26 +73,33 @@ export default function Cuti() {
         <div className="border-b border-gray-900/10 pb-6">
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-4">
             <div className="sm:col-span-4 flex">
-            <div className="">
-              <label htmlFor="dates" className="block text-sm/6 font-medium text-gray-900">
-                Tanggal Cuti
-              </label>
-              {dates.map((item, index) => (
-                <div key={item.id}>
-                  <div className="grid grid-cols-6 items-center gap-2 mt-2">
-                  <input type="date" id ="dates" value={item.date} onChange={(e) => handleDateChange(item.id, e.target.value)} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5" required />
-                  {index > 0 && (
-                    <button type="button" onClick={() => handleRemoveDate(item.id)} className="col-span-1 bg-red-500 text-white py-0.5 px-2 rounded">
-                      -
-                    </button>
-                  )}
-                </div>
-                </div>
-              ))}
-              <button type="button" onClick={handleAddDate} className="bg-green-500 text-white py-0.5 px-2 rounded mt-2">
-                +
-              </button>
-            </div>
+              <div className="">
+                <label htmlFor="dates" className="block text-sm/6 font-medium text-gray-900">
+                  Tanggal Cuti
+                </label>
+                {dates.map((item, index) => (
+                  <div key={item.id}>
+                    <div className="grid grid-cols-6 items-center gap-2 mt-2">
+                      <input
+                        type="date"
+                        id="dates"
+                        value={item.date}
+                        onChange={(e) => handleDateChange(item.id, e.target.value)}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6 col-span-5"
+                        required
+                      />
+                      {index > 0 && (
+                        <button type="button" onClick={() => handleRemoveDate(item.id)} className="col-span-1 bg-red-500 text-white py-0.5 px-2 rounded">
+                          -
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <button type="button" onClick={handleAddDate} className="bg-green-500 text-white py-0.5 px-2 rounded mt-2">
+                  +
+                </button>
+              </div>
             </div>
             <div className="sm:col-span-2">
               <label htmlFor="jeniscuti" className="block text-sm/6 font-medium text-gray-900">
@@ -119,21 +120,7 @@ export default function Cuti() {
               </div>
             </div>
             <div className="sm:col-span-5">
-              <label htmlFor="reason" className="block text-sm/6 font-medium text-gray-900">
-                Alasan
-              </label>
-              <div className="mt-2">
-                <input
-                  id="reason"
-                  name="reason"
-                  type="text"
-                  value={reason}
-                  onChange={handleOnChange}
-                  required
-                  maxLength="65"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                />
-              </div>
+              <Input label="Alasan" name="reason" value={reason} onChange={handleOnChange} type="text" placeholder="Masukkan alasan cuti" />
             </div>
           </div>
         </div>

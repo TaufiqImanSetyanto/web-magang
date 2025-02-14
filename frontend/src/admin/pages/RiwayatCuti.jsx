@@ -8,6 +8,8 @@ import { getTheme } from "../../utils/AdminCutiThemeTable";
 import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { CutiPDF } from "../../utils/CutiPDF";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../components/HandleNotif";
 
 export default function RiwayatCuti() {
   const [cutiList, setCutiList] = useState([]);
@@ -17,7 +19,7 @@ export default function RiwayatCuti() {
 
   const filteredCutiList = cutiList.filter((cuti) => {
     const tahunCuti = new Date(cuti.dates[0]?.date).getFullYear().toString();
-    return (filterJenis ? cuti.jenisCuti.split(' ')[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
+    return (filterJenis ? cuti.jenisCuti.split(" ")[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
   });
 
   const data = { nodes: filteredCutiList };
@@ -29,7 +31,7 @@ export default function RiwayatCuti() {
         const { data } = await axios.get(`http://localhost:4000/admin/riwayatcuti`);
         setCutiList(data.acceptedCuti.reverse());
       } catch (error) {
-        console.error("Error fetching cuti list:", error);
+        console.error("Error fetching cuti list",error);
       } finally {
         setLoading(false);
       }
@@ -43,8 +45,10 @@ export default function RiwayatCuti() {
       const { user } = data;
       const blob = await pdf(<CutiPDF cuti={cuti} user={user} />).toBlob();
       saveAs(blob, `Permohonancuti_${cuti.username}_${cuti.dates[0]?.date}.pdf`);
+      handleSuccess("Berhasil mengunduh Cuti PDF");
     } catch (error) {
-      console.error("Gagal mengunduh PDF:", error);
+      console.error(error);
+      handleError("Gagal mengunduh Cuti PDF");
     }
   }
 
@@ -102,7 +106,7 @@ export default function RiwayatCuti() {
                     <Cell className="capitalize">{cuti.jenisCuti}</Cell>
                     <Cell>
                       {cuti.dates.map((date) => (
-                        <div key={date.id}>{new Date(date.date).toLocaleDateString()}</div>
+                        <div key={date.id}>{new Date(date.date).toLocaleDateString("id-ID")}</div>
                       ))}
                     </Cell>
                     <Cell>{cuti.reason}</Cell>
@@ -121,6 +125,7 @@ export default function RiwayatCuti() {
       ) : (
         <p className="text-gray-600">Tidak ada data cuti.</p>
       )}
+      <ToastContainer />
     </div>
   );
 }

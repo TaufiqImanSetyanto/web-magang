@@ -2,8 +2,10 @@ import logo from "../assets/ptsgn_logo.png";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
 import { useAuth } from "../contexts/authContext";
+import Input from "../components/Input";
 
 function Login() {
   const { login } = useAuth();
@@ -21,15 +23,6 @@ function Login() {
     });
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "top-center",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "top-center",
-    });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -44,7 +37,7 @@ function Login() {
       if (success) {
         login(user);
         handleSuccess(message);
-        if(user.role === "admin"){
+        if (user.role === "admin") {
           setTimeout(() => {
             navigate("/admin");
           }, 2000);
@@ -62,7 +55,8 @@ function Login() {
         handleError(message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response.data.message);
     }
   };
   return (
@@ -74,44 +68,8 @@ function Login() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleSubmit} method="POST" className="space-y-6">
-          <div>
-            <label htmlFor="NIK" className="block text-sm/6 font-medium text-gray-900">
-              NIK
-            </label>
-            <div className="mt-2">
-              <input
-                id="NIK"
-                name="NIK"
-                type="text"
-                required
-                value={NIK}
-                placeholder="Masukkan NIK"
-                onChange={handleOnChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                Password
-              </label>
-            </div>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                placeholder="Masukkan password"
-                onChange={handleOnChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
+          <Input label="NIK" name="NIK" value={NIK} onChange={handleOnChange} type="text" placeholder="Masukkan NIK" />
+          <Input label="Password" name="password" value={password} onChange={handleOnChange} type="password" placeholder="Masukkan Password" />
           <div>
             <button
               type="submit"

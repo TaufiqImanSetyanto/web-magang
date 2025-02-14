@@ -20,14 +20,13 @@ export default function RiwayatAbsen() {
         const { data } = await axios.get(`http://localhost:4000/absen/riwayatabsen/${userId}`);
         setListRiwayatAbsen(data.riwayatAbsen.reverse());
       } catch (error) {
-        console.error("Error fetching absen list:", error);
+        console.error("Error fetching absen",error);
       } finally {
         setLoading(false);
       }
     }
     fetchAbsen();
   }, [userId]);
-  console.log(listRiwayatAbsen);
   return (
     <>
       <h2 className="font-bold text-xl text-gray-900">Riwayat Absen</h2>

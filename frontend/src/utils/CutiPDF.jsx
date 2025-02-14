@@ -112,7 +112,7 @@ export const CutiPDF = ({ cuti, user }) => {
             </View>
             <View style={styles.column}>
               {cuti.dates.map((date) => (
-                <Text key={date.id}>{new Date(date.date).toLocaleDateString()}</Text>
+                <Text key={date.id}>{new Date(date.date).toLocaleDateString("id-ID")}</Text>
               ))}
             </View>
           </View>

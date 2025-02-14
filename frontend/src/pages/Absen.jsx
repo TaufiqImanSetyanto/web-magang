@@ -4,6 +4,8 @@ import axios from "axios";
 import RiwayatAbsen from "../components/RiwayatAbsen";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Loading from "../components/Loading";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
 
 export default function Absen() {
   const { user } = useAuth();
@@ -40,9 +42,15 @@ export default function Absen() {
         locationIn: location,
       };
       const { data } = await axios.post("http://localhost:4000/absen/checkin", checkIn);
-      console.log(data.absen);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+      } else {
+        handleError(message);
+      }
     } catch (error) {
-      console.error("Error during check-in:", error);
+      console.error(error);
+      handleError(error.response.data.message);
     }
   };
   const handleCheckOut = async () => {
@@ -52,9 +60,15 @@ export default function Absen() {
         locationOut: location,
       };
       const { data } = await axios.post("http://localhost:4000/absen/checkout", checkOut);
-      console.log(data.absen);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+      } else {
+        handleError(message);
+      }
     } catch (error) {
-      console.error("Error during check-out:", error);
+      console.error(error);
+      handleError(error.response.data.message);
     }
   };
   return (
@@ -65,15 +79,13 @@ export default function Absen() {
       ) : (
         <div className="mb-5">
           <div>
-            <p>
-              Latitude: {location?.latitude}
-            </p>
-            <p>
-              Longitude: {location?.longitude}
-            </p>
+            <p>Latitude: {location?.latitude}</p>
+            <p>Longitude: {location?.longitude}</p>
           </div>
           <div className="flex gap-2">
-            <label htmlFor="jadwal" className="py-2 font-medium">Jadwal:</label>
+            <label htmlFor="jadwal" className="py-2 font-medium">
+              Jadwal:
+            </label>
             <div className="mt-1 mb-2 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
               <select
                 id="jadwal"
@@ -99,6 +111,7 @@ export default function Absen() {
         </div>
       )}
       <RiwayatAbsen />
+      <ToastContainer />
     </div>
   );
 }

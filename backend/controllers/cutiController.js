@@ -25,7 +25,7 @@ async function cuti(req, res) {
     });
     await permohonanCuti.save();
 
-    res.status(200).json({ message: "Permohonan cuti submitted", success: true });
+    res.status(201).json({ message: "Permohonan cuti submitted", success: true });
   } catch (error) {
     console.log(error);
   }

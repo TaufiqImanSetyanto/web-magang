@@ -6,6 +6,8 @@ import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-li
 import { useTheme } from "@table-library/react-table-library/theme";
 import { getTheme } from "../../utils/AdminCutiThemeTable";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../components/HandleNotif";
 
 export default function AdminCuti() {
   const [cutiPendingList, setCutiPendingList] = useState([]);
@@ -13,7 +15,7 @@ export default function AdminCuti() {
   const data = { nodes: cutiPendingList };
   const theme = useTheme(getTheme);
   const [open, setOpen] = useState(false);
-  const [selectedCuti,setSelectedCuti]= useState(null)
+  const [selectedCuti, setSelectedCuti] = useState(null);
   useEffect(() => {
     async function fetchCutiPending() {
       try {
@@ -30,11 +32,18 @@ export default function AdminCuti() {
   }, []);
   async function handleDecision(id, status) {
     try {
-      await axios.put(`http://localhost:4000/admin/kelolacuti/${id}`, { status });
-      setCutiPendingList((prev) => prev.filter((cuti) => cuti._id !== id));
-      setOpen(false)
+      const { data } = await axios.put(`http://localhost:4000/admin/kelolacuti/${id}`, { status });
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setCutiPendingList((prev) => prev.filter((cuti) => cuti._id !== id));
+      } else {
+        handleError(message);
+      }
+      setOpen(false);
     } catch (error) {
       console.error(error);
+      handleError(error.response.data.message);
     }
   }
   return (
@@ -63,17 +72,20 @@ export default function AdminCuti() {
                     <Cell className="capitalize">{cuti.jenisCuti}</Cell>
                     <Cell>
                       {cuti.dates.map((date) => (
-                        <div key={date.id}>{new Date(date.date).toLocaleDateString()}</div>
+                        <div key={date.id}>{new Date(date.date).toLocaleDateString("id-ID")}</div>
                       ))}
                     </Cell>
                     <Cell>{cuti.reason}</Cell>
                     <Cell>{cuti.daysRequested} Hari</Cell>
                     <Cell>
                       <div className="grid grid-flow-col gap-2">
-                        <button onClick={() => {
+                        <button
+                          onClick={() => {
                             setSelectedCuti(cuti._id);
                             setOpen(true);
-                          }} className={`hover:cursor-pointer hover:bg-green-600 hover:text-white border rounded text-sm  ${statusColors["accepted"]}`}>
+                          }}
+                          className={`hover:cursor-pointer hover:bg-green-600 hover:text-white border rounded text-sm  ${statusColors["accepted"]}`}
+                        >
                           Accept
                         </button>
                         <button onClick={() => handleDecision(cuti._id, "rejected")} className={`hover:cursor-pointer hover:bg-red-600 hover:text-white border rounded text-sm  ${statusColors["rejected"]}`}>
@@ -103,14 +115,18 @@ export default function AdminCuti() {
                 <div className="sm:flex sm:items-start">
                   <div className="text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
-                     Konfirmasi Persetujuan
+                      Konfirmasi Persetujuan
                     </DialogTitle>
                     <p className="mt-2 text-sm text-gray-600">Apakah Anda yakin ingin menyetujui cuti ini?</p>
                   </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button type="button" onClick={() => handleDecision(selectedCuti, "accepted")} className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-800 sm:ml-3 sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => handleDecision(selectedCuti, "accepted")}
+                  className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-800 sm:ml-3 sm:w-auto"
+                >
                   Ya, Setujui
                 </button>
                 <button
@@ -126,6 +142,7 @@ export default function AdminCuti() {
           </div>
         </div>
       </Dialog>
+      <ToastContainer />
     </div>
   );
 }

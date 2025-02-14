@@ -17,7 +17,7 @@ export const AuthContextProvider = ({ children }) => {
         const { data } = await axios.get("http://localhost:4000/auth", { withCredentials: true });
         setUser(data.user);
       } catch (error) {
-        console.error("Error verifying token:", error);
+        console.error("Error verifying user",error);
         setUser(null);
       } finally {
         setLoading(false);

@@ -7,7 +7,7 @@ async function register(req, res) {
     const { NIK, password, bagian, username } = req.body;
     const existingUser = await User.findOne({ NIK });
     if (existingUser) {
-      return res.json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
     const user = new User({ NIK, password, bagian, username });
     user.password = await bcrypt.hash(password, 12);
@@ -27,15 +27,15 @@ async function login(req, res) {
   try {
     const { NIK, password } = req.body;
     if (!NIK || !password) {
-      return res.json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
     const user = await User.findOne({ NIK });
     if (!user) {
-      return res.json({ message: "Incorrect NIK" });
+      return res.status(400).json({ message: "Incorrect NIK" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.json({ message: "Incorrect password" });
+      return res.status(400).json({ message: "Incorrect password" });
     }
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
@@ -63,7 +63,7 @@ async function changePassword(req, res) {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) return res.json({ message: "Password lama salah" });
+    if (!isMatch) return res.status(400).json({ message: "Password lama salah" });
 
     user.password = await bcrypt.hash(newPassword, 12);
     await user.save();

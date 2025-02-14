@@ -4,6 +4,9 @@ import axios from "axios";
 import Loading from "../../components/Loading";
 import { listBagian } from "../../utils/Bagian";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../components/HandleNotif";
+import Input from "../../components/Input";
 
 export default function EditUser() {
   const { id } = useParams();
@@ -29,7 +32,7 @@ export default function EditUser() {
         const { user } = data;
         setUser(user);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching user", error);
       } finally {
         setLoading(false);
       }
@@ -66,9 +69,16 @@ export default function EditUser() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:4000/admin/edituser/${id}`, user);
+      const { data } = await axios.put(`http://localhost:4000/admin/edituser/${id}`, user);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+      } else {
+        handleError(message);
+      }
     } catch (error) {
       console.log(error);
+      handleError(error.response.data.message);
     }
   }
 
@@ -80,35 +90,9 @@ export default function EditUser() {
         <div>
           <h2 className="text-xl font-bold mb-4">Edit Akun</h2>
           <form onSubmit={handleSubmit} method="PUT">
-            <div className="flex flex-col">
-              <div className="mb-1">
-                <label htmlFor="username" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Nama
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  name="username"
-                  value={user.username}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
-              <div className="mb-1">
-                <label htmlFor="NIK" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  NIK
-                </label>
-                <input
-                  id="NIK"
-                  type="text"
-                  name="NIK"
-                  value={user.NIK}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-1">
+              <Input label="Nama" name="username" value={user.username} onChange={handleOnChange} type="text" />
+              <Input label="NIK" name="NIK" value={user.NIK} onChange={handleOnChange} type="text" />
               <div className="mb-1">
                 <label htmlFor="bagian" className="block text-sm/6 font-medium text-gray-900">
                   Bagian
@@ -130,76 +114,11 @@ export default function EditUser() {
                   <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
                 </div>
               </div>
-              <div className="mb-1">
-                <label htmlFor="tahunPengangkatan" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Tahun Pengangkatan
-                </label>
-                <input
-                  id="tahunPengangkatan"
-                  type="text"
-                  name="tahunPengangkatan"
-                  value={user.tahunPengangkatan}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
-              <div className="mb-1">
-                <label htmlFor="cutitahunan" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Cuti Tahunan
-                </label>
-                <input
-                  id="cutitahunan"
-                  type="number"
-                  name="hakCuti.tahunan"
-                  value={user.hakCuti.tahunan}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
-              <div className="mb-1">
-                <label htmlFor="cutipanjang" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Cuti Panjang
-                </label>
-                <input
-                  id="cutipanjang"
-                  type="number"
-                  name="hakCuti.panjang"
-                  value={user.hakCuti.panjang}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
-              <div className="mb-1">
-                <label htmlFor="tahuncutitahunan" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Tahun Cuti Tahunan
-                </label>
-                <input
-                  id="tahuncutitahunan"
-                  type="text"
-                  name="tahunCuti.tahunan"
-                  value={user.tahunCuti.tahunan}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
-              <div className="mb-1">
-                <label htmlFor="tahuncutipanjang" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                  Tahun Cuti Panjang
-                </label>
-                <input
-                  id="tahuncutipanjang"
-                  type="text"
-                  name="tahunCuti.panjang"
-                  value={user.tahunCuti.panjang}
-                  onChange={handleOnChange}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                  required
-                />
-              </div>
+              <Input label="Tahun Pengangkatan" name="tahunPengangkatan" value={user.tahunPengangkatan} onChange={handleOnChange} type="text" />
+              <Input label="Cuti Tahunan" name="hakCuti.tahunan" value={user.hakCuti.tahunan} onChange={handleOnChange} type="number" />
+              <Input label="Cuti Panjang" name="hakCuti.panjang" value={user.hakCuti.panjang} onChange={handleOnChange} type="number" />
+              <Input label="Tahun Cuti Tahunan" name="tahunCuti.tahunan" value={user.tahunCuti.tahunan} onChange={handleOnChange} type="text" />
+              <Input label="Tahun Cuti Panjang" name="tahunCuti.panjang" value={user.tahunCuti.panjang} onChange={handleOnChange} type="text" />
               <div className="mt-4 flex justify-end">
                 <button type="submit" className=" rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
                   Simpan
@@ -209,6 +128,7 @@ export default function EditUser() {
           </form>
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }

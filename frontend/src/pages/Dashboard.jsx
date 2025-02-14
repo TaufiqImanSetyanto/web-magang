@@ -30,7 +30,7 @@ export default function Dashboard() {
         const { data } = await axios.get(`http://localhost:4000/cuti/riwayatcuti/${userId}`);
         setCutiList(data.cuti.reverse());
       } catch (error) {
-        console.error("Error fetching cuti list:", error);
+        console.error("Error fetching cuti",error);
       } finally {
         setLoading(false);
       }
@@ -90,7 +90,7 @@ export default function Dashboard() {
                     <Cell className="capitalize">{cuti.jenisCuti}</Cell>
                     <Cell>
                       {cuti.dates.map((date) => (
-                        <div key={date.id}>{new Date(date.date).toLocaleDateString()}</div>
+                        <div key={date.id}>{new Date(date.date).toLocaleDateString("id-ID")}</div>
                       ))}
                     </Cell>
                     <Cell>{cuti.reason}</Cell>

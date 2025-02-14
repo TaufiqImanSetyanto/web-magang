@@ -2,10 +2,12 @@ import logo from "../assets/ptsgn_logo.png";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
 import { useAuth } from "../contexts/authContext";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { listBagian } from "../utils/Bagian";
+import Input from "../components/Input";
 
 function Register() {
   const { login } = useAuth();
@@ -24,16 +26,6 @@ function Register() {
       [name]: value,
     });
   };
-
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "top-center",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "top-center",
-    });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -62,7 +54,8 @@ function Register() {
         handleError(message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response.data.message);
     }
   };
 
@@ -75,40 +68,8 @@ function Register() {
 
       <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleSubmit} method="POST" className="space-y-2">
-          <div>
-            <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
-              Nama
-            </label>
-            <div className="mt-2">
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                value={username}
-                placeholder="Masukkan username"
-                onChange={handleOnChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="NIK" className="block text-sm/6 font-medium text-gray-900">
-              NIK
-            </label>
-            <div className="mt-2">
-              <input
-                id="NIK"
-                name="NIK"
-                type="text"
-                required
-                value={NIK}
-                placeholder="Masukkan NIK"
-                onChange={handleOnChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
+          <Input label="Nama" name="username" value={username} onChange={handleOnChange} type="text" placeholder="Masukkan username" />
+          <Input label="NIK" name="NIK" value={NIK} onChange={handleOnChange} type="text" placeholder="Masukkan NIK" />
           <div>
             <label htmlFor="bagian" className="block text-sm/6 font-medium text-gray-900">
               Bagian
@@ -130,24 +91,7 @@ function Register() {
               <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-              Password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                placeholder="Masukkan password"
-                onChange={handleOnChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
+          <Input label="Password" name="password" value={password} onChange={handleOnChange} type="password" placeholder="Masukkan Password" />
           <div>
             <button
               type="submit"

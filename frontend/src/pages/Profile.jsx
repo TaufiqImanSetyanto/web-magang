@@ -2,7 +2,10 @@ import { useAuth } from "../contexts/authContext";
 import axios from "axios";
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
+import Information from "../components/Information";
+import Input from "../components/Input";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -22,15 +25,6 @@ export default function Profile() {
     });
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "top-center",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "top-center",
-    });
-
   const handleChangePassword = async () => {
     try {
       setLoading(true);
@@ -38,7 +32,7 @@ export default function Profile() {
         oldPassword,
         newPassword,
       });
-      console.log(data)
+      console.log(data);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
@@ -46,7 +40,8 @@ export default function Profile() {
         handleError(message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response.data.message);
     } finally {
       setLoading(false);
       setInputValue({
@@ -61,31 +56,13 @@ export default function Profile() {
       <div>
         <h2 className="font-bold text-xl text-gray-900">Profile</h2>
         <div>
-          <dl className="divide-y divide-gray-300">
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Nama Lengkap</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.username}</dd>
-            </div>
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">NIK</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.NIK}</dd>
-            </div>
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Bagian</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.bagian}</dd>
-            </div>
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Tahun Pengangkatan</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.tahunPengangkatan}</dd>
-            </div>
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Hak Cuti Tahunan {user.tahunCuti.tahunan}</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.hakCuti.tahunan}</dd>
-            </div>
-            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Hak Cuti Panjang {user.tahunCuti.panjang}</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{user.hakCuti.panjang}</dd>
-            </div>
+          <div className="divide-y divide-gray-300">
+            <Information first="Nama Lengkap" second={user.username} />
+            <Information first="NIK" second={user.NIK} />
+            <Information first="Bagian" second={user.bagian} />
+            <Information first="Tahun Pengangkatan" second={user.tahunPengangkatan} />
+            <Information first={`Hak Cuti Tahunan ${user.tahunCuti.tahunan}`} second={user.hakCuti.tahunan} />
+            <Information first={`Hak Cuti Panjang ${user.tahunCuti.panjang}`} second={user.hakCuti.panjang} />
             <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <div className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <button
@@ -96,7 +73,7 @@ export default function Profile() {
                 </button>
               </div>
             </div>
-          </dl>
+          </div>
         </div>
       </div>
       <Dialog open={open} onClose={() => {}} className="relative z-10">
@@ -106,38 +83,12 @@ export default function Profile() {
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+              className="relative transform overflow-hidiven rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Ganti Password</h2>
-                <div className="mb-1">
-                  <label htmlFor="oldPassword" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                    Password Lama
-                  </label>
-                  <input
-                    id="oldPassword"
-                    type="text"
-                    name="oldPassword"
-                    value={oldPassword}
-                    onChange={handleOnChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                    required
-                  />
-                </div>
-                <div className="mb-1">
-                  <label htmlFor="newPassword" className="mb-2 block text-sm/6 font-medium text-gray-900">
-                    Password Baru
-                  </label>
-                  <input
-                    id="newPassword"
-                    type="text"
-                    name="newPassword"
-                    value={newPassword}
-                    onChange={handleOnChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-                    required
-                  />
-                </div>
+                <Input label="Password Lama" name="oldPassword" value={oldPassword} onChange={handleOnChange} type="text" />
+                <Input label="Password Baru" name="newPassword" value={newPassword} onChange={handleOnChange} type="text" />
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
