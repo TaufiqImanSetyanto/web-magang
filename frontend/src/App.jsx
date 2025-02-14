@@ -13,6 +13,7 @@ import AdminCuti from "./admin/pages/AdminCuti"
 import EditUser from "./admin/pages/EditUser"
 import Profile from "./pages/Profile";
 import RiwayatCuti from "./admin/pages/RiwayatCuti";
+import Absen from "./pages/Absen"
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="/absen" element={<Absen />} />
           <Route path="/cuti" element={<Cuti />} />
           <Route path="/profile" element={<Profile/>}/>
         </Route>

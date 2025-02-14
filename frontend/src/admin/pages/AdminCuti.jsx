@@ -4,7 +4,7 @@ import Loading from "../../components/Loading";
 import { statusColors } from "../../utils/StatusColors";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
-import { getTheme } from "../../utils/AdminThemeTable";
+import { getTheme } from "../../utils/AdminCutiThemeTable";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 
 export default function AdminCuti() {

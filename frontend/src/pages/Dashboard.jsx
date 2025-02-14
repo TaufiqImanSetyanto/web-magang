@@ -6,7 +6,7 @@ import { statusColors } from "../utils/StatusColors";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { getTheme } from "../utils/UserThemeTable";
+import { getTheme } from "../utils/UserCutiThemeTable";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const filteredCutiList = cutiList.filter((cuti) => {
     const tahunCuti = new Date(cuti.dates[0]?.date).getFullYear().toString();
-    return (filterJenis ? cuti.jenisCuti.split(' ')[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
+    return (filterJenis ? cuti.jenisCuti.split(" ")[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
   });
 
   const data = { nodes: filteredCutiList };

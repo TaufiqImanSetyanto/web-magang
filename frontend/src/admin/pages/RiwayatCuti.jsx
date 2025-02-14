@@ -4,7 +4,7 @@ import Loading from "../../components/Loading";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { getTheme } from "../../utils/AdminThemeTable";
+import { getTheme } from "../../utils/AdminCutiThemeTable";
 import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { CutiPDF } from "../../utils/CutiPDF";

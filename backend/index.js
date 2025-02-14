@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authRoute");
 const cutiRoute = require("./routes/cutiRoute");
 const adminRoute = require("./routes/adminRoute");
+const absenRoute = require("./routes/absenRoute");
 
 mongoose
   .connect(MONGODB_URL)
@@ -28,4 +29,5 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/auth", authRoute);
 app.use("/cuti", cutiRoute);
-app.use("/admin", adminRoute)
+app.use("/admin", adminRoute);
+app.use("/absen", absenRoute)

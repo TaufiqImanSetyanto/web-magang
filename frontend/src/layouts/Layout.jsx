@@ -17,6 +17,7 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/", current: true },
+    { name: "Absen", href: "/absen", current: false },
     { name: "Cuti", href: "/cuti", current: false },
     { name: "Profile", href: "/profile", current: false },
   ]);

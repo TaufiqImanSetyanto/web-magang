@@ -160,9 +160,8 @@ export default function Profile() {
             </DialogPanel>
           </div>
         </div>
-        <ToastContainer />
       </Dialog>
-      
+      <ToastContainer />
     </>
   );
 }
