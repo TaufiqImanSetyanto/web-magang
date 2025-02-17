@@ -5,14 +5,12 @@ async function checkIn(req, res) {
     const { userId, locationIn, jadwal } = req.body;
     const today = new Date();
     const day = today.toLocaleDateString("id-ID", { weekday: "long" });
-    const date = today.toLocaleDateString("id-ID");
-    const checkInTime = today.toLocaleTimeString("id-ID");
-
-    today.setHours(0, 0, 0, 0);
+    const date = today.toISOString().split("T")[0];
+    const checkInTime = today.toTimeString().split(" ")[0];
 
     const existingAbsen = await Absen.findOne({
       userId,
-      date: today.toLocaleDateString("id-ID"),
+      date,
     });
     if (existingAbsen) {
       return res.status(400).json({
@@ -31,11 +29,11 @@ async function checkOut(req, res) {
     const { userId, locationOut } = req.body;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const date = today.toISOString().split("T")[0];
 
     const absen = await Absen.findOne({
       userId,
-      date: today.toLocaleDateString("id-ID"),
+      date, 
     });
 
     if (!absen) {
@@ -51,7 +49,7 @@ async function checkOut(req, res) {
     }
 
     absen.locationOut = locationOut;
-    absen.checkOutTime = new Date().toLocaleTimeString("id-ID");
+    absen.checkOutTime = new Date().toTimeString().split(" ")[0];
     await absen.save();
 
     res.status(200).json({ success: true, message: "Berhasil check-out", absen });
