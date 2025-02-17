@@ -14,6 +14,7 @@ import EditUser from "./admin/pages/EditUser"
 import Profile from "./pages/Profile";
 import RiwayatCuti from "./admin/pages/RiwayatCuti";
 import Absen from "./pages/Absen"
+import AdminAbsen from "./admin/pages/AdminAbsen";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           }
         >
            <Route index element={<AdminDashboard />} />
+           <Route path="kelolaabsen" element={<AdminAbsen />} />
            <Route path="kelolacuti" element={<AdminCuti />} />
            <Route path="riwayatcuti" element={<RiwayatCuti/>}/>
            <Route path="edituser/:id" element={<EditUser/>} />

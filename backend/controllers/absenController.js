@@ -63,7 +63,7 @@ async function checkOut(req, res) {
 async function listRiwayatAbsen(req, res) {
   try {
     const userId = req.params.id;
-    const riwayatAbsen = await Absen.find({ userId }).populate("userId");
+    const riwayatAbsen = await Absen.find({ userId });
     if (!riwayatAbsen) res.status(400).json({ message: "Tidak ada riwayat absen" });
     res.status(200).json({ success: true, message: "Berhasil mengambil riwayat absen", riwayatAbsen });
   } catch (error) {
