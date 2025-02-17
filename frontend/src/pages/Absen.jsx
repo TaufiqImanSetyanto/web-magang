@@ -13,6 +13,7 @@ export default function Absen() {
   const [location, setLocation] = useState();
   const [loading, setLoading] = useState(true);
   const [jadwal, setJadwal] = useState("shift pagi");
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -77,11 +78,21 @@ export default function Absen() {
       {loading ? (
         <Loading />
       ) : (
-        <div className="mb-5">
+        <div className="mb-5 space-y-2">
           <div>
             <p>Latitude: {location?.latitude}</p>
             <p>Longitude: {location?.longitude}</p>
           </div>
+          {location && (
+            <iframe
+              width="100%"
+              height="300"
+              style={{ border: 0, borderRadius: "10px" }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${location.latitude},${location.longitude}`}
+            ></iframe>
+          )}
           <div className="flex gap-2">
             <label htmlFor="jadwal" className="py-2 font-medium">
               Jadwal:
