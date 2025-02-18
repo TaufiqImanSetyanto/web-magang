@@ -35,7 +35,32 @@ export default function Absen() {
     }
   }, []);
 
+  const officeLocation = {
+    latitude: -6.926224, 
+    longitude: 109.562998, 
+  };
+  const allowedDistance = 1000; 
+  // Haversine formula
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371e3;
+    const lati1 = toRad(lat1);
+    const lati2 = toRad(lat2);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lati1) * Math.cos(lati2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; 
+  };
+
   const handleCheckIn = async () => {
+    const distance = calculateDistance(location.latitude, location.longitude, officeLocation.latitude, officeLocation.longitude);
+    if (distance > allowedDistance) {
+      handleError("Kamu terlalu jauh dari kantor untuk check-in");
+      return;
+    }
     try {
       const checkIn = {
         userId,
@@ -54,7 +79,13 @@ export default function Absen() {
       handleError(error.response.data.message);
     }
   };
+
   const handleCheckOut = async () => {
+    const distance = calculateDistance(location.latitude, location.longitude, officeLocation.latitude, officeLocation.longitude);
+    if (distance > allowedDistance) {
+      handleError("Kamu terlalu jauh dari kantor untuk check-out");
+      return;
+    }
     try {
       const checkOut = {
         userId,
