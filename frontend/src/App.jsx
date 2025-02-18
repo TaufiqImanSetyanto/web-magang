@@ -11,10 +11,11 @@ import AdminDashboard from "./admin/pages/AdminDashboard"
 import AdminLayout from "./admin/layouts/AdminLayout"
 import AdminCuti from "./admin/pages/AdminCuti"
 import EditUser from "./admin/pages/EditUser"
-import Profile from "./pages/Profile";
-import RiwayatCuti from "./admin/pages/RiwayatCuti";
+import AdminRiwayatCuti from "./admin/pages/AdminRiwayatCuti";
 import Absen from "./pages/Absen"
 import AdminAbsen from "./admin/pages/AdminAbsen";
+import RiwayatAbsen from "./pages/RiwayatAbsen";
+import RiwayatCuti from "./pages/RiwayatCuti";
 
 function App() {
   return (
@@ -32,8 +33,9 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="/absen" element={<Absen />} />
+          <Route path="/absen/riwayat" element={<RiwayatAbsen />} />
           <Route path="/cuti" element={<Cuti />} />
-          <Route path="/profile" element={<Profile/>}/>
+          <Route path="/cuti/riwayat" element={<RiwayatCuti />} />
         </Route>
         <Route
           path="/admin"
@@ -46,7 +48,7 @@ function App() {
            <Route index element={<AdminDashboard />} />
            <Route path="kelolaabsen" element={<AdminAbsen />} />
            <Route path="kelolacuti" element={<AdminCuti />} />
-           <Route path="riwayatcuti" element={<RiwayatCuti/>}/>
+           <Route path="riwayatcuti" element={<AdminRiwayatCuti/>}/>
            <Route path="edituser/:id" element={<EditUser/>} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized/>} />

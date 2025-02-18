@@ -4,8 +4,8 @@ import axios from "axios";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
 import { getTheme } from "../utils/UserAbsenThemeTable";
-import Loading from "./Loading";
-import Pagination from "./Pagination";
+import Loading from "../components/Loading";
+import Pagination from "../components/Pagination";
 
 export default function RiwayatAbsen() {
   const { user } = useAuth();

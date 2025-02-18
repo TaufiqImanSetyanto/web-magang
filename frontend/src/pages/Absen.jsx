@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/authContext";
 import axios from "axios";
-import RiwayatAbsen from "../components/RiwayatAbsen";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Loading from "../components/Loading";
 import { ToastContainer } from "react-toastify";
@@ -152,7 +151,6 @@ export default function Absen() {
           </div>
         </div>
       )}
-      <RiwayatAbsen />
       <ToastContainer />
     </div>
   );

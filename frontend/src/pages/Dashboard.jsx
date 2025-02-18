@@ -1,129 +1,118 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
 import { useAuth } from "../contexts/authContext";
-import Loading from "../components/Loading";
-import { statusColors } from "../utils/StatusColors";
-import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
-import { useTheme } from "@table-library/react-table-library/theme";
-import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { getTheme } from "../utils/UserCutiThemeTable";
-import Pagination from "../components/Pagination";
+import axios from "axios";
+import { useState } from "react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
+import Information from "../components/Information";
+import Input from "../components/Input";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const userId = user?._id;
-  const [cutiList, setCutiList] = useState([]);
+  const id = user?._id;
   const [loading, setLoading] = useState(false);
-  const [filterJenis, setFilterJenis] = useState("");
-  const [filterTahun, setFilterTahun] = useState("");
-
-  const filteredCutiList = cutiList.filter((cuti) => {
-    const tahunCuti = new Date(cuti.dates[0]?.date).getFullYear().toString();
-    return (filterJenis ? cuti.jenisCuti.split(" ")[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState({
+    oldPassword: "",
+    newPassword: "",
   });
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredCutiList.slice(indexOfFirstData, indexOfLastData);
-
-  const totalData = filteredCutiList.length;
-  const totalPages = Math.ceil(totalData / dataPerPage);
-
-  const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const { oldPassword, newPassword } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
   };
 
-  const prevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const data = { nodes: currentData };
-  const theme = useTheme(getTheme);
-  useEffect(() => {
-    async function fetchCuti() {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(`http://localhost:4000/cuti/riwayatcuti/${userId}`);
-        setCutiList(data.cuti.reverse());
-      } catch (error) {
-        console.error("Error fetching cuti", error);
-      } finally {
-        setLoading(false);
+  const handleChangePassword = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.put(`http://localhost:4000/auth/changepassword/${id}`, {
+        oldPassword,
+        newPassword,
+      });
+      console.log(data);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+      } else {
+        handleError(message);
       }
+    } catch (error) {
+      console.error(error);
+      handleError(error.response.data.message);
+    } finally {
+      setLoading(false);
+      setInputValue({
+        ...inputValue,
+        oldPassword: "",
+        newPassword: "",
+      });
     }
-    fetchCuti();
-  }, [userId]);
-
+  };
   return (
-    <div>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Riwayat Cuti</h2>
+    <>
       <div>
-        <h3 className="block text-md/6 font-medium text-gray-900">Filter</h3>
-        <div className="mt-1 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-2">
-          <select
-            value={filterJenis}
-            onChange={(e) => setFilterJenis(e.target.value)}
-            className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-          >
-            <option value={""}>Jenis</option>
-            <option value={"tahunan"}>Tahunan</option>
-            <option value={"panjang"}>Panjang</option>
-          </select>
-          <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
-          <select
-            value={filterTahun}
-            onChange={(e) => setFilterTahun(e.target.value)}
-            className="col-start-2 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-          >
-            <option value={""}>Tahun</option>
-            {[...new Set(cutiList.map((cuti) => new Date(cuti.dates[0]?.date).getFullYear().toString()))].map((tahun) => (
-              <option key={tahun} value={tahun}>
-                {tahun}
-              </option>
-            ))}
-          </select>
-          <ChevronDownIcon className="pointer-events-none col-start-2 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+        <h2 className="font-bold text-xl text-gray-900">Profile</h2>
+        <div>
+          <div className="divide-y divide-gray-300">
+            <Information first="Nama Lengkap" second={user.username} />
+            <Information first="NIK" second={user.NIK} />
+            <Information first="Bagian" second={user.bagian} />
+            <Information first="Tahun Pengangkatan" second={user.tahunPengangkatan} />
+            <Information first={`Hak Cuti Tahunan ${user.tahunCuti.tahunan}`} second={user.hakCuti.tahunan} />
+            <Information first={`Hak Cuti Panjang ${user.tahunCuti.panjang}`} second={user.hakCuti.panjang} />
+            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <div className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <button
+                  onClick={() => setOpen(true)}
+                  className=" rounived-md bg-sky-800 px-3 py-2 text-sm font-semibold rounded text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                >
+                  Ganti Password
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      {loading ? (
-        <Loading />
-      ) : cutiList.length > 0 ? (
-        <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
-          {(tableList) => (
-            <>
-              <Header>
-                <HeaderRow>
-                  <HeaderCell>Jenis Cuti</HeaderCell>
-                  <HeaderCell>Tanggal</HeaderCell>
-                  <HeaderCell>Alasan</HeaderCell>
-                  <HeaderCell>Durasi</HeaderCell>
-                  <HeaderCell>Status</HeaderCell>
-                </HeaderRow>
-              </Header>
-              <Body>
-                {tableList.map((cuti) => (
-                  <Row key={cuti._id} item={cuti}>
-                    <Cell className="capitalize">{cuti.jenisCuti}</Cell>
-                    <Cell>
-                      {cuti.dates.map((date) => (
-                        <div key={date.id}>{date.date}</div>
-                      ))}
-                    </Cell>
-                    <Cell>{cuti.reason}</Cell>
-                    <Cell>{cuti.daysRequested} Hari</Cell>
-                    <Cell className={statusColors[cuti.status]}>{cuti.status}</Cell>
-                  </Row>
-                ))}
-              </Body>
-            </>
-          )}
-        </Table>
-      ) : (
-        <p className="text-gray-600">Tidak ada data cuti.</p>
-      )}
-      <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
-    </div>
+      <Dialog open={open} onClose={() => {}} className="relative z-10">
+        <DialogBackdrop transition className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in" />
+
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto items-center">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <DialogPanel
+              transition
+              className="relative transform overflow-hidiven rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+            >
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Ganti Password</h2>
+                <Input label="Password Lama" name="oldPassword" value={oldPassword} onChange={handleOnChange} type="text" />
+                <Input label="Password Baru" name="newPassword" value={newPassword} onChange={handleOnChange} type="text" />
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={loading}
+                  className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
+                >
+                  {loading ? "Mengubah..." : "Ganti Password"}
+                </button>
+                <button
+                  type="button"
+                  data-autofocus
+                  onClick={() => setOpen(false)}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
+      </Dialog>
+      <ToastContainer />
+    </>
   );
 }
