@@ -10,6 +10,7 @@ import { pdf } from "@react-pdf/renderer";
 import { CutiPDF } from "../../utils/CutiPDF";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
+import Pagination from "../../components/Pagination";
 
 export default function RiwayatCuti() {
   const [cutiList, setCutiList] = useState([]);
@@ -22,7 +23,24 @@ export default function RiwayatCuti() {
     return (filterJenis ? cuti.jenisCuti.split(" ")[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
   });
 
-  const data = { nodes: filteredCutiList };
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 10;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = filteredCutiList.slice(indexOfFirstData, indexOfLastData);
+
+  const totalData = filteredCutiList.length;
+  const totalPages = Math.ceil(totalData / dataPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchCuti() {
@@ -31,7 +49,7 @@ export default function RiwayatCuti() {
         const { data } = await axios.get(`http://localhost:4000/admin/riwayatcuti`);
         setCutiList(data.acceptedCuti.reverse());
       } catch (error) {
-        console.error("Error fetching cuti list",error);
+        console.error("Error fetching cuti list", error);
       } finally {
         setLoading(false);
       }
@@ -125,6 +143,7 @@ export default function RiwayatCuti() {
       ) : (
         <p className="text-gray-600">Tidak ada data cuti.</p>
       )}
+      <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
       <ToastContainer />
     </div>
   );

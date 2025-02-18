@@ -6,16 +6,35 @@ import { getTheme } from "../../utils/AdminAbsenThemeTable";
 import Loading from "../../components/Loading";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { listBagian } from "../../utils/Bagian";
+import Pagination from "../../components/Pagination";
 
 export default function AdminAbsen() {
   const [absenList, setAbsenList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterBagian, setFilterBagian] = useState("");
-  const [filterTanggal, setFilterTanggal] = useState("");   
+  const [filterTanggal, setFilterTanggal] = useState("");
   const filteredAbsenList = absenList.filter((absen) => {
     return (filterBagian ? absen.userId.bagian === filterBagian : true) && (filterTanggal ? absen.date === filterTanggal : true);
   });
-  const data = { nodes: filteredAbsenList };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 10;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = filteredAbsenList.slice(indexOfFirstData, indexOfLastData);
+
+  const totalData = filteredAbsenList.length;
+  const totalPages = Math.ceil(totalData / dataPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchAbsen() {
@@ -94,6 +113,7 @@ export default function AdminAbsen() {
       ) : (
         <p className="text-gray-600">Tidak ada data absen.</p>
       )}
+      <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
     </>
   );
 }

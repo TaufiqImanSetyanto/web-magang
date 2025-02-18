@@ -5,13 +5,32 @@ import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-li
 import { useTheme } from "@table-library/react-table-library/theme";
 import { getTheme } from "../utils/UserAbsenThemeTable";
 import Loading from "./Loading";
+import Pagination from "./Pagination";
 
 export default function RiwayatAbsen() {
   const { user } = useAuth();
   const userId = user?._id;
   const [loading, setLoading] = useState(true);
   const [listRiwayatAbsen, setListRiwayatAbsen] = useState([]);
-  const data = { nodes: listRiwayatAbsen };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 10;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = listRiwayatAbsen.slice(indexOfFirstData, indexOfLastData);
+
+  const totalData = listRiwayatAbsen.length;
+  const totalPages = Math.ceil(totalData / dataPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchAbsen() {
@@ -20,7 +39,7 @@ export default function RiwayatAbsen() {
         const { data } = await axios.get(`http://localhost:4000/absen/riwayatabsen/${userId}`);
         setListRiwayatAbsen(data.riwayatAbsen.reverse());
       } catch (error) {
-        console.error("Error fetching absen",error);
+        console.error("Error fetching absen", error);
       } finally {
         setLoading(false);
       }
@@ -62,6 +81,7 @@ export default function RiwayatAbsen() {
       ) : (
         <p className="text-gray-600">Tidak ada data absen.</p>
       )}
+      <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
     </>
   );
 }

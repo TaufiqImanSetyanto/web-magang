@@ -7,6 +7,7 @@ import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-li
 import { useTheme } from "@table-library/react-table-library/theme";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { getTheme } from "../utils/UserCutiThemeTable";
+import Pagination from "../components/Pagination";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -21,7 +22,24 @@ export default function Dashboard() {
     return (filterJenis ? cuti.jenisCuti.split(" ")[0] === filterJenis : true) && (filterTahun ? tahunCuti === filterTahun : true);
   });
 
-  const data = { nodes: filteredCutiList };
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 10;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = filteredCutiList.slice(indexOfFirstData, indexOfLastData);
+
+  const totalData = filteredCutiList.length;
+  const totalPages = Math.ceil(totalData / dataPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
     async function fetchCuti() {
@@ -30,7 +48,7 @@ export default function Dashboard() {
         const { data } = await axios.get(`http://localhost:4000/cuti/riwayatcuti/${userId}`);
         setCutiList(data.cuti.reverse());
       } catch (error) {
-        console.error("Error fetching cuti",error);
+        console.error("Error fetching cuti", error);
       } finally {
         setLoading(false);
       }
@@ -105,6 +123,7 @@ export default function Dashboard() {
       ) : (
         <p className="text-gray-600">Tidak ada data cuti.</p>
       )}
+      <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
     </div>
   );
 }
