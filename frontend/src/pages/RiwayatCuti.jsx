@@ -45,7 +45,7 @@ export default function RiwayatCuti() {
     async function fetchCuti() {
       try {
         setLoading(true);
-        const { data } = await axios.get(`http://localhost:4000/cuti/riwayatcuti/${userId}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/cuti/riwayatcuti/${userId}`);
         setCutiList(data.cuti.reverse());
       } catch (error) {
         console.error("Error fetching cuti", error);

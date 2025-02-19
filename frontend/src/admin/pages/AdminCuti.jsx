@@ -20,7 +20,7 @@ export default function AdminCuti() {
     async function fetchCutiPending() {
       try {
         setLoading(true);
-        const { data } = await axios.get("http://localhost:4000/admin/listcuti");
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listcuti`);
         setCutiPendingList(data.cutiPending.reverse());
       } catch (error) {
         console.error("Error fetching cuti list:", error);
@@ -32,7 +32,7 @@ export default function AdminCuti() {
   }, []);
   async function handleDecision(id, status) {
     try {
-      const { data } = await axios.put(`http://localhost:4000/admin/kelolacuti/${id}`, { status });
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/admin/kelolacuti/${id}`, { status });
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

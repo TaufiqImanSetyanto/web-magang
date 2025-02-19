@@ -35,10 +35,10 @@ export default function Absen() {
   }, []);
 
   const officeLocation = {
-    latitude: -6.926224, 
-    longitude: 109.562998, 
+    latitude: -6.926224,
+    longitude: 109.562998,
   };
-  const allowedDistance = 1000; 
+  const allowedDistance = 1000;
   // Haversine formula
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -51,7 +51,7 @@ export default function Absen() {
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lati1) * Math.cos(lati2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; 
+    return R * c;
   };
 
   const handleCheckIn = async () => {
@@ -66,7 +66,7 @@ export default function Absen() {
         jadwal,
         locationIn: location,
       };
-      const { data } = await axios.post("http://localhost:4000/absen/checkin", checkIn);
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/absen/checkin`, checkIn);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
@@ -90,7 +90,7 @@ export default function Absen() {
         userId,
         locationOut: location,
       };
-      const { data } = await axios.post("http://localhost:4000/absen/checkout", checkOut);
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/absen/checkout`, checkOut);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

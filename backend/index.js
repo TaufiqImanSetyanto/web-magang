@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
-const { MONGODB_URL, PORT } = process.env;
+const { MONGODB_URL, PORT, FRONTEND_URL } = process.env;
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authRoute");
 const cutiRoute = require("./routes/cutiRoute");
@@ -21,7 +21,7 @@ app.listen(PORT, () => {
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_URL,
     credentials: true,
   })
 );

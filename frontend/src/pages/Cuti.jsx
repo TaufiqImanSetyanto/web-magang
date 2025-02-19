@@ -40,7 +40,7 @@ export default function Cuti() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post("http://localhost:4000/cuti/ambilcuti", {
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cuti/ambilcuti`, {
         userId,
         username,
         dates,

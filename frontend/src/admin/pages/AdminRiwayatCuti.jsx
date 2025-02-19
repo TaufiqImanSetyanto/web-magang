@@ -46,7 +46,7 @@ export default function RiwayatCuti() {
     async function fetchCuti() {
       try {
         setLoading(true);
-        const { data } = await axios.get(`http://localhost:4000/admin/riwayatcuti`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/riwayatcuti`);
         setCutiList(data.acceptedCuti.reverse());
       } catch (error) {
         console.error("Error fetching cuti list", error);
@@ -59,7 +59,7 @@ export default function RiwayatCuti() {
 
   async function handleDownloadCutiPDF(cuti) {
     try {
-      const { data } = await axios.get(`http://localhost:4000/admin/user/${cuti.userId}`);
+      const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/user/${cuti.userId}`);
       const { user } = data;
       const blob = await pdf(<CutiPDF cuti={cuti} user={user} />).toBlob();
       saveAs(blob, `Permohonancuti_${cuti.username}_${cuti.dates[0]?.date}.pdf`);

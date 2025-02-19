@@ -28,7 +28,7 @@ export default function Dashboard() {
   const handleChangePassword = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.put(`http://localhost:4000/auth/changepassword/${id}`, {
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/auth/changepassword/${id}`, {
         oldPassword,
         newPassword,
       });

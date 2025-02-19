@@ -28,7 +28,7 @@ export default function EditUser() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const { data } = await axios.get(`http://localhost:4000/admin/user/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/user/${id}`);
         const { user } = data;
         setUser(user);
       } catch (error) {
@@ -69,7 +69,7 @@ export default function EditUser() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const { data } = await axios.put(`http://localhost:4000/admin/edituser/${id}`, user);
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/admin/edituser/${id}`, user);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

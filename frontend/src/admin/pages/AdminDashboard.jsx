@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchAllUser() {
       try {
-        const { data } = await axios.get("http://localhost:4000/admin/alluser");
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/alluser`);
         const { allUser } = data;
         setAllUser(allUser);
       } catch (error) {

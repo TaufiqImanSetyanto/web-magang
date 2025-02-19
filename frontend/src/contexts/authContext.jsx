@@ -14,10 +14,10 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/auth", { withCredentials: true });
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth`, { withCredentials: true });
         setUser(data.user);
       } catch (error) {
-        console.error("Error verifying user",error);
+        console.error("Error verifying user", error);
         setUser(null);
       } finally {
         setLoading(false);
@@ -30,7 +30,7 @@ export const AuthContextProvider = ({ children }) => {
     setUser(user);
   };
   const logout = async () => {
-    await axios.get("http://localhost:4000/auth/logout", { withCredentials: true });
+    await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, { withCredentials: true });
     setUser(null);
   };
 

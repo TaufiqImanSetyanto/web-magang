@@ -40,7 +40,7 @@ export default function AdminAbsen() {
     async function fetchAbsen() {
       try {
         setLoading(true);
-        const { data } = await axios.get("http://localhost:4000/admin/listabsen");
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listabsen`);
         setAbsenList(data.absen.reverse());
       } catch (error) {
         console.error("Error fetching absen list:", error);

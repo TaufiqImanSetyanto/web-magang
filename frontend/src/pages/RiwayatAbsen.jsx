@@ -36,7 +36,7 @@ export default function RiwayatAbsen() {
     async function fetchAbsen() {
       try {
         setLoading(true);
-        const { data } = await axios.get(`http://localhost:4000/absen/riwayatabsen/${userId}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/absen/riwayatabsen/${userId}`);
         setListRiwayatAbsen(data.riwayatAbsen.reverse());
       } catch (error) {
         console.error("Error fetching absen", error);

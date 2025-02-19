@@ -30,7 +30,7 @@ function Register() {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/auth/register",
+        `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
         {
           ...inputValue,
         },
