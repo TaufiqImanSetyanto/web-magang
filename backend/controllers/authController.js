@@ -16,7 +16,9 @@ async function register(req, res) {
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
       withCredentials: true,
-      httpOnly: false,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
     });
     res.status(201).json({ message: "User registered successfully", success: true, user });
   } catch (error) {
@@ -40,7 +42,9 @@ async function login(req, res) {
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
       withCredentials: true,
-      httpOnly: false,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
     });
     res.status(200).json({ message: "User logged in successfully", success: true, user });
   } catch (error) {
@@ -49,7 +53,12 @@ async function login(req, res) {
 }
 async function logout(req, res) {
   try {
-    res.clearCookie("token");
+    res.clearCookie("token",{
+      withCredentials: true,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     res.status(200).json({ message: "User logged out successfully", success: true });
   } catch (error) {
     console.error(error);
