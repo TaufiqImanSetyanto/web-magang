@@ -8,6 +8,11 @@ import { useTheme } from "@table-library/react-table-library/theme";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { getTheme } from "../utils/UserCutiThemeTable";
 import Pagination from "../components/Pagination";
+import { saveAs } from "file-saver";
+import { pdf } from "@react-pdf/renderer";
+import { CutiPDF } from "../utils/CutiPDF";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../components/HandleNotif";
 
 export default function RiwayatCuti() {
   const { user } = useAuth();
@@ -56,6 +61,18 @@ export default function RiwayatCuti() {
     fetchCuti();
   }, [userId]);
 
+  async function handleDownloadCutiPDF(cuti) {
+    try {
+      console.log(cuti)
+      const blob = await pdf(<CutiPDF cuti={cuti} user={cuti.userId} />).toBlob();
+      saveAs(blob, `Permohonancuti_${cuti.userId.username}_${cuti.dates[0]?.date}.pdf`);
+      handleSuccess("Berhasil mengunduh Cuti PDF");
+    } catch (error) {
+      console.error(error);
+      handleError("Gagal mengunduh Cuti PDF");
+    }
+  }
+
   return (
     <div>
       <h2 className="text-xl font-bold text-gray-900 mb-4">Riwayat Cuti</h2>
@@ -100,6 +117,7 @@ export default function RiwayatCuti() {
                   <HeaderCell>Alasan</HeaderCell>
                   <HeaderCell>Durasi</HeaderCell>
                   <HeaderCell>Status</HeaderCell>
+                  <HeaderCell>Aksi</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -114,6 +132,11 @@ export default function RiwayatCuti() {
                     <Cell>{cuti.reason}</Cell>
                     <Cell>{cuti.daysRequested} Hari</Cell>
                     <Cell className={statusColors[cuti.status]}>{cuti.status}</Cell>
+                    <Cell>
+                      <button onClick={() => handleDownloadCutiPDF(cuti)} className={cuti.status === "accepted" ? "hover:cursor-pointer hover:bg-sky-700 py-0.5 px-3 text-white bg-sky-800 rounded text-sm" : "hover:cursor-not-allowed py-0.5 px-3 text-gray-700 bg-gray-300 rounded text-sm"} disabled={cuti.status !== "accepted"}>
+                        Download PDF
+                      </button>
+                    </Cell>
                   </Row>
                 ))}
               </Body>
@@ -124,6 +147,7 @@ export default function RiwayatCuti() {
         <p className="text-gray-600">Tidak ada data cuti.</p>
       )}
       <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
+      <ToastContainer />
     </div>
   );
 }

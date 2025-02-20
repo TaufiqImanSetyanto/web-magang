@@ -33,7 +33,7 @@ async function cuti(req, res) {
 async function riwayatCuti(req, res) {
   try {
     const userId = req.params.id;
-    const cuti = await Cuti.find({ userId: userId });
+    const cuti = await Cuti.find({ userId: userId }).populate("userId");
     if (!cuti) {
       res.status(404).json({ message: "Tidak ada permohonan cuti" });
     }

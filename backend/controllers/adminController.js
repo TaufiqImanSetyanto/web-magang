@@ -4,7 +4,7 @@ const Presensi = require("../models/presensiModel");
 
 async function listCutiPending(req, res) {
   try {
-    const cutiPending = await Cuti.find({ status: "pending" });
+    const cutiPending = await Cuti.find({ status: "pending" }).populate("userId");;
     if (!cutiPending) {
       res.status(404).json({ message: "Tidak ada yang mengajukan cuti" });
     }
@@ -81,8 +81,8 @@ async function editUser(req, res) {
 
 async function getAcceptedCuti(req, res) {
   try {
-    const acceptedCuti = await Cuti.find({ status: "accepted" });
-    if (!acceptedCuti) return res.status(404).json({ message: "User not found" });
+    const acceptedCuti = await Cuti.find({ status: "accepted" }).populate("userId");
+    if (!acceptedCuti) return res.status(404).json({ message: "Cuti not found" });
     res.status(200).json({ success: true, acceptedCuti });
   } catch (error) {
     console.log(error);

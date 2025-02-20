@@ -68,7 +68,7 @@ export default function AdminCuti() {
               <Body>
                 {tableList.map((cuti) => (
                   <Row key={cuti._id} item={cuti}>
-                    <Cell>{cuti.username}</Cell>
+                    <Cell>{cuti.userId.username}</Cell>
                     <Cell className="capitalize">{cuti.jenisCuti}</Cell>
                     <Cell>
                       {cuti.dates.map((date) => (

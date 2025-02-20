@@ -59,10 +59,8 @@ export default function RiwayatCuti() {
 
   async function handleDownloadCutiPDF(cuti) {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/user/${cuti.userId}`);
-      const { user } = data;
-      const blob = await pdf(<CutiPDF cuti={cuti} user={user} />).toBlob();
-      saveAs(blob, `Permohonancuti_${cuti.username}_${cuti.dates[0]?.date}.pdf`);
+      const blob = await pdf(<CutiPDF cuti={cuti} user={cuti.userId} />).toBlob();
+      saveAs(blob, `Permohonancuti_${cuti.userId.username}_${cuti.dates[0]?.date}.pdf`);
       handleSuccess("Berhasil mengunduh Cuti PDF");
     } catch (error) {
       console.error(error);
@@ -120,7 +118,7 @@ export default function RiwayatCuti() {
               <Body>
                 {tableList.map((cuti) => (
                   <Row key={cuti._id} item={cuti}>
-                    <Cell>{cuti.username}</Cell>
+                    <Cell>{cuti.userId.username}</Cell>
                     <Cell className="capitalize">{cuti.jenisCuti}</Cell>
                     <Cell>
                       {cuti.dates.map((date) => (
