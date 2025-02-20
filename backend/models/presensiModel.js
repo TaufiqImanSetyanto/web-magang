@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const absenSchema = new mongoose.Schema({
+const presensiSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -20,4 +20,4 @@ const absenSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Absen", absenSchema);
+module.exports = mongoose.model("Presensi", presensiSchema);

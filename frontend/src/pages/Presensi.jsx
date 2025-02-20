@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
 import { officeLocation } from "../utils/OfficeLocation";
 
-export default function Absen() {
+export default function Presensi() {
   const { user } = useAuth();
   const userId = user._id;
   const [location, setLocation] = useState();
@@ -70,7 +70,7 @@ export default function Absen() {
         jadwal,
         locationIn: location,
       };
-      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/absen/checkin`, checkIn);
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/presensi/checkin`, checkIn);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
@@ -99,7 +99,7 @@ export default function Absen() {
         userId,
         locationOut: location,
       };
-      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/absen/checkout`, checkOut);
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/presensi/checkout`, checkOut);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
@@ -113,7 +113,7 @@ export default function Absen() {
   };
   return (
     <div>
-      <h2 className="font-bold text-xl text-gray-900">Absen</h2>
+      <h2 className="font-bold text-xl text-gray-900">Presensi</h2>
       {loading ? (
         <Loading />
       ) : (

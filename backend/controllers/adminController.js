@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const Cuti = require("../models/cutiModel");
-const Absen = require("../models/absenModel");
+const Presensi = require("../models/presensiModel");
 
 async function listCutiPending(req, res) {
   try {
@@ -89,14 +89,14 @@ async function getAcceptedCuti(req, res) {
   }
 }
 
-async function listAllAbsen(req, res) {
+async function listAllPresensi(req, res) {
   try {
-    const absen = await Absen.find().populate("userId");
-    if (!absen) return res.status(404).json({ message: "Absen not found" });
-    res.status(200).json({ success: true, absen });
+    const presensi = await Presensi.find().populate("userId");
+    if (!presensi) return res.status(404).json({ message: "Presensi not found" });
+    res.status(200).json({ success: true, presensi });
   } catch (error) {
     console.log(error);
   }
 }
 
-module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser, getAcceptedCuti, listAllAbsen };
+module.exports = { listCutiPending, kelolaCuti, listAllUser, getUser, editUser, getAcceptedCuti, listAllPresensi };

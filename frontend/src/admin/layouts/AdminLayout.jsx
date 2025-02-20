@@ -17,7 +17,7 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/admin", current: true },
-    { name: "Kelola Absen", href: "/admin/kelolaabsen", current: false },
+    { name: "Kelola Presensi", href: "/admin/kelolapresensi", current: false },
     { name: "Kelola Cuti", href: "/admin/kelolacuti", current: false },
     { name: "Riwayat Cuti", href: "/admin/riwayatcuti", current: false },
   ]);

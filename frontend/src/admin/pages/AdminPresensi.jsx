@@ -2,28 +2,28 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
-import { getTheme } from "../../utils/AdminAbsenThemeTable";
+import { getTheme } from "../../utils/AdminPresensiThemeTable";
 import Loading from "../../components/Loading";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { listBagian } from "../../utils/Bagian";
 import Pagination from "../../components/Pagination";
 
-export default function AdminAbsen() {
-  const [absenList, setAbsenList] = useState([]);
+export default function AdminPresensi() {
+  const [presensiList, setPresensiList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterBagian, setFilterBagian] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
-  const filteredAbsenList = absenList.filter((absen) => {
-    return (filterBagian ? absen.userId.bagian === filterBagian : true) && (filterTanggal ? absen.date === filterTanggal : true);
+  const filteredPresensiList = presensiList.filter((presensi) => {
+    return (filterBagian ? presensi.userId.bagian === filterBagian : true) && (filterTanggal ? presensi.date === filterTanggal : true);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 10;
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredAbsenList.slice(indexOfFirstData, indexOfLastData);
+  const currentData = filteredPresensiList.slice(indexOfFirstData, indexOfLastData);
 
-  const totalData = filteredAbsenList.length;
+  const totalData = filteredPresensiList.length;
   const totalPages = Math.ceil(totalData / dataPerPage);
 
   const nextPage = () => {
@@ -37,22 +37,22 @@ export default function AdminAbsen() {
   const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
-    async function fetchAbsen() {
+    async function fetchPresensi() {
       try {
         setLoading(true);
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listabsen`);
-        setAbsenList(data.absen.reverse());
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listpresensi`);
+        setPresensiList(data.presensi.reverse());
       } catch (error) {
-        console.error("Error fetching absen list:", error);
+        console.error("Error fetching presensi list:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchAbsen();
+    fetchPresensi();
   }, []);
   return (
     <>
-      <h2 className="font-bold text-xl text-gray-900">Riwayat Absen</h2>
+      <h2 className="font-bold text-xl text-gray-900">Riwayat Presensi</h2>
       <div>
         <h3 className="block text-md/6 font-medium text-gray-900">Filter</h3>
         <div className="mt-1 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
@@ -79,7 +79,7 @@ export default function AdminAbsen() {
       </div>
       {loading ? (
         <Loading />
-      ) : absenList.length > 0 ? (
+      ) : presensiList.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
           {(tableList) => (
             <>
@@ -95,15 +95,15 @@ export default function AdminAbsen() {
                 </HeaderRow>
               </Header>
               <Body>
-                {tableList.map((absen) => (
-                  <Row key={absen._id} item={absen}>
-                    <Cell>{absen.userId.username}</Cell>
-                    <Cell>{absen.userId.bagian}</Cell>
-                    <Cell>{absen.checkInTime}</Cell>
-                    <Cell>{absen.checkOutTime}</Cell>
-                    <Cell>{absen.day}</Cell>
-                    <Cell>{absen.date}</Cell>
-                    <Cell>{absen.jadwal}</Cell>
+                {tableList.map((presensi) => (
+                  <Row key={presensi._id} item={presensi}>
+                    <Cell>{presensi.userId.username}</Cell>
+                    <Cell>{presensi.userId.bagian}</Cell>
+                    <Cell>{presensi.checkInTime}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
+                    <Cell>{presensi.day}</Cell>
+                    <Cell>{presensi.date}</Cell>
+                    <Cell>{presensi.jadwal}</Cell>
                   </Row>
                 ))}
               </Body>
@@ -111,7 +111,7 @@ export default function AdminAbsen() {
           )}
         </Table>
       ) : (
-        <p className="text-gray-600">Tidak ada data absen.</p>
+        <p className="text-gray-600">Tidak ada data presensi.</p>
       )}
       <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
     </>

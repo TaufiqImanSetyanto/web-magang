@@ -1,4 +1,4 @@
-const Absen = require("../models/absenModel");
+const Presensi = require("../models/presensiModel");
 
 async function checkIn(req, res) {
   try {
@@ -8,17 +8,17 @@ async function checkIn(req, res) {
     const date = today.toISOString().split("T")[0];
     const checkInTime = today.toTimeString().split(" ")[0];
 
-    const existingAbsen = await Absen.findOne({
+    const existingPresensi = await Presensi.findOne({
       userId,
       date,
     });
-    if (existingAbsen) {
+    if (existingPresensi) {
       return res.status(400).json({
         message: "Kamu sudah check-in hari ini",
       });
     }
-    const absen = await Absen.create({ userId, locationIn, date, day, jadwal, checkInTime });
-    res.status(201).json({ success: true, message: "Berhasil check-in", absen });
+    const presensi = await Presensi.create({ userId, locationIn, date, day, jadwal, checkInTime });
+    res.status(201).json({ success: true, message: "Berhasil check-in", presensi });
   } catch (error) {
     console.log(error);
   }
@@ -31,42 +31,42 @@ async function checkOut(req, res) {
     const today = new Date();
     const date = today.toISOString().split("T")[0];
 
-    const absen = await Absen.findOne({
+    const presensi = await Presensi.findOne({
       userId,
       date, 
     });
 
-    if (!absen) {
+    if (!presensi) {
       return res.status(400).json({
         message: "Kamu belum check-in hari ini",
       });
     }
 
-    if (absen.checkOutTime) {
+    if (presensi.checkOutTime) {
       return res.status(400).json({
         message: "Kamu sudah check-out hari ini",
       });
     }
 
-    absen.locationOut = locationOut;
-    absen.checkOutTime = new Date().toTimeString().split(" ")[0];
-    await absen.save();
+    presensi.locationOut = locationOut;
+    presensi.checkOutTime = new Date().toTimeString().split(" ")[0];
+    await presensi.save();
 
-    res.status(200).json({ success: true, message: "Berhasil check-out", absen });
+    res.status(200).json({ success: true, message: "Berhasil check-out", presensi });
   } catch (error) {
     console.log(error);
   }
 }
 
-async function listRiwayatAbsen(req, res) {
+async function listRiwayatPresensi(req, res) {
   try {
     const userId = req.params.id;
-    const riwayatAbsen = await Absen.find({ userId });
-    if (!riwayatAbsen) res.status(400).json({ message: "Tidak ada riwayat absen" });
-    res.status(200).json({ success: true, message: "Berhasil mengambil riwayat absen", riwayatAbsen });
+    const riwayatPresensi = await Presensi.find({ userId });
+    if (!riwayatPresensi) res.status(400).json({ message: "Tidak ada riwayat presensi" });
+    res.status(200).json({ success: true, message: "Berhasil mengambil riwayat presensi", riwayatPresensi });
   } catch (error) {
     console.log(error);
   }
 }
 
-module.exports = { checkIn, checkOut, listRiwayatAbsen };
+module.exports = { checkIn, checkOut, listRiwayatPresensi };

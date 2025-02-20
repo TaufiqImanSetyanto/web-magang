@@ -3,23 +3,23 @@ import { useAuth } from "../contexts/authContext";
 import axios from "axios";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
-import { getTheme } from "../utils/UserAbsenThemeTable";
+import { getTheme } from "../utils/UserPresensiThemeTable";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 
-export default function RiwayatAbsen() {
+export default function RiwayatPresensi() {
   const { user } = useAuth();
   const userId = user?._id;
   const [loading, setLoading] = useState(true);
-  const [listRiwayatAbsen, setListRiwayatAbsen] = useState([]);
+  const [listRiwayatPresensi, setListRiwayatPresensi] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 10;
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = listRiwayatAbsen.slice(indexOfFirstData, indexOfLastData);
+  const currentData = listRiwayatPresensi.slice(indexOfFirstData, indexOfLastData);
 
-  const totalData = listRiwayatAbsen.length;
+  const totalData = listRiwayatPresensi.length;
   const totalPages = Math.ceil(totalData / dataPerPage);
 
   const nextPage = () => {
@@ -33,25 +33,25 @@ export default function RiwayatAbsen() {
   const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
-    async function fetchAbsen() {
+    async function fetchPresensi() {
       try {
         setLoading(true);
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/absen/riwayatabsen/${userId}`);
-        setListRiwayatAbsen(data.riwayatAbsen.reverse());
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/presensi/riwayatpresensi/${userId}`);
+        setListRiwayatPresensi(data.riwayatPresensi.reverse());
       } catch (error) {
-        console.error("Error fetching absen", error);
+        console.error("Error fetching presensi", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchAbsen();
+    fetchPresensi();
   }, [userId]);
   return (
     <>
-      <h2 className="font-bold text-xl text-gray-900">Riwayat Absen</h2>
+      <h2 className="font-bold text-xl text-gray-900">Riwayat Presensi</h2>
       {loading ? (
         <Loading />
-      ) : listRiwayatAbsen.length > 0 ? (
+      ) : listRiwayatPresensi.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
           {(tableList) => (
             <>
@@ -65,13 +65,13 @@ export default function RiwayatAbsen() {
                 </HeaderRow>
               </Header>
               <Body>
-                {tableList.map((absen) => (
-                  <Row key={absen._id} item={absen}>
-                    <Cell>{absen.checkInTime}</Cell>
-                    <Cell>{absen.checkOutTime}</Cell>
-                    <Cell>{absen.day}</Cell>
-                    <Cell>{absen.date}</Cell>
-                    <Cell>{absen.jadwal}</Cell>
+                {tableList.map((presensi) => (
+                  <Row key={presensi._id} item={presensi}>
+                    <Cell>{presensi.checkInTime}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
+                    <Cell>{presensi.day}</Cell>
+                    <Cell>{presensi.date}</Cell>
+                    <Cell>{presensi.jadwal}</Cell>
                   </Row>
                 ))}
               </Body>
@@ -79,7 +79,7 @@ export default function RiwayatAbsen() {
           )}
         </Table>
       ) : (
-        <p className="text-gray-600">Tidak ada data absen.</p>
+        <p className="text-gray-600">Tidak ada data presensi.</p>
       )}
       <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
     </>

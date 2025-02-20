@@ -18,12 +18,12 @@ export default function Layout() {
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/", current: true },
     {
-      name: "Absen",
-      href: "/absen",
+      name: "Presensi",
+      href: "/presensi",
       current: false,
       subNav: [
-        { name: "Absen", href: "/absen", current: false },
-        { name: "Riwayat Absen", href: "/absen/riwayat", current: false },
+        { name: "Presensi", href: "/presensi", current: false },
+        { name: "Riwayat Presensi", href: "/presensi/riwayat", current: false },
       ],
     },
     {
