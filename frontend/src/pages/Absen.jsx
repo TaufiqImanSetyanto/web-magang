@@ -1,18 +1,22 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/authContext";
 import axios from "axios";
-import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { ChevronDownIcon, ExclamationTriangleIcon } from "@heroicons/react/16/solid";
 import Loading from "../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
+import { officeLocation } from "../utils/OfficeLocation";
 
 export default function Absen() {
   const { user } = useAuth();
   const userId = user._id;
   const [location, setLocation] = useState();
   const [loading, setLoading] = useState(true);
-  const [jadwal, setJadwal] = useState("shift pagi");
+  const [jadwal, setJadwal] = useState("07:00 - 15:00");
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const date = new Date().toLocaleString("id-ID");
+  const showDate = date.split(",")[0];
+  const showTime = date.split(",")[1];
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -34,11 +38,6 @@ export default function Absen() {
     }
   }, []);
 
-  const officeLocation = {
-    latitude: -6.926224,
-    longitude: 109.562998,
-  };
-  const allowedDistance = 1000;
   // Haversine formula
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -55,8 +54,13 @@ export default function Absen() {
   };
 
   const handleCheckIn = async () => {
-    const distance = calculateDistance(location.latitude, location.longitude, officeLocation.latitude, officeLocation.longitude);
-    if (distance > allowedDistance) {
+    const nearestOffice = officeLocation.reduce((prev, curr) => {
+      const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
+      const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
+      return prevDistance < currDistance ? prev : curr;
+    });
+    const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
+    if (distance > nearestOffice.allowedDistance) {
       handleError("Kamu terlalu jauh dari kantor untuk check-in");
       return;
     }
@@ -80,8 +84,13 @@ export default function Absen() {
   };
 
   const handleCheckOut = async () => {
-    const distance = calculateDistance(location.latitude, location.longitude, officeLocation.latitude, officeLocation.longitude);
-    if (distance > allowedDistance) {
+    const nearestOffice = officeLocation.reduce((prev, curr) => {
+      const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
+      const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
+      return prevDistance < currDistance ? prev : curr;
+    });
+    const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
+    if (distance > nearestOffice.allowedDistance) {
       handleError("Kamu terlalu jauh dari kantor untuk check-out");
       return;
     }
@@ -109,9 +118,17 @@ export default function Absen() {
         <Loading />
       ) : (
         <div className="mb-5 space-y-2">
-          <div>
-            <p>Latitude: {location?.latitude}</p>
-            <p>Longitude: {location?.longitude}</p>
+          <div className="sm:flex sm:justify-between space-y-2 sm:space-y-0">
+            <div>
+              <p>Latitude: {location?.latitude}</p>
+              <p>Longitude: {location?.longitude}</p>
+            </div>
+            <div className="flex self-center">
+              <div className="border-2 rounded-md border-sky-500 flex gap-2 p-1 text-lg text-sky-600 font-bold">
+                <div>{showDate}</div>
+                <div>{showTime}</div>
+              </div>
+            </div>
           </div>
           {location && (
             <iframe
@@ -127,19 +144,22 @@ export default function Absen() {
             <label htmlFor="jadwal" className="py-2 font-medium">
               Jadwal:
             </label>
-            <div className="mt-1 mb-2 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            <div className="mt-1 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
               <select
                 id="jadwal"
                 value={jadwal}
                 onChange={(e) => setJadwal(e.target.value)}
                 className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               >
-                <option value="shift pagi">Shift Pagi</option>
-                <option value="shift siang">Shift Siang</option>
-                <option value="shift malam">Shift Malam</option>
+                <option value="07:00 - 15:00">07:00 - 15:00</option>
+                <option value="07:00 - 12:00">07:00 - 12:00</option>
               </select>
               <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>
+          </div>
+          <div className="flex gap-2">
+            <ExclamationTriangleIcon className="size-6 text-yellow-500" />
+            <p className="text-yellow-500 font-bold text-sm">Hanya bisa 1 kali check-in ataupun check-out perhari</p>
           </div>
           <div className="flex space-x-10">
             <button onClick={handleCheckIn} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">

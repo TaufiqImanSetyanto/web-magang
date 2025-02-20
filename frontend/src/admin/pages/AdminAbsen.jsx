@@ -103,7 +103,7 @@ export default function AdminAbsen() {
                     <Cell>{absen.checkOutTime}</Cell>
                     <Cell>{absen.day}</Cell>
                     <Cell>{absen.date}</Cell>
-                    <Cell className="capitalize">{absen.jadwal}</Cell>
+                    <Cell>{absen.jadwal}</Cell>
                   </Row>
                 ))}
               </Body>
