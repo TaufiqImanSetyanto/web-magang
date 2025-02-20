@@ -5,12 +5,12 @@ import { ChevronDownIcon, ExclamationTriangleIcon } from "@heroicons/react/16/so
 import Loading from "../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
-import { officeLocation } from "../utils/OfficeLocation";
 
 export default function Presensi() {
   const { user } = useAuth();
   const userId = user._id;
   const [location, setLocation] = useState();
+  const [officeLocation, setOfficeLocation] = useState([]);
   const [loading, setLoading] = useState(true);
   const [jadwal, setJadwal] = useState("07:00 - 15:00");
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -18,26 +18,38 @@ export default function Presensi() {
   const showDate = date.split(",")[0];
   const showTime = date.split(",")[1];
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          setLoading(false);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser");
-      setLoading(false);
-    }
-  }, []);
+     const fetchOffice = async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listoffice`);
+        setOfficeLocation(data.office);
+      } catch (error) {
+        console.error("Error fetching office data:", error);
+      }
+    };
 
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+            setLoading(false);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser");
+        setLoading(false);
+      }
+    };
+    fetchOffice();
+    getLocation();
+  }, []);
   // Haversine formula
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;

@@ -1,17 +1,28 @@
 import logo from "../assets/ptsgn_logo.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
 import { useAuth } from "../contexts/authContext";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { listBagian } from "../utils/Bagian";
 import Input from "../components/Input";
 
 function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [listBagian, setListBagian] = useState([]);
+  useEffect(()=>{
+    const fetchBagian = async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
+        setListBagian(data.bagian);
+      } catch (error) {
+        console.error("Error fetching bagian data:", error);
+      }
+    }
+    fetchBagian()
+  },[])
   const [inputValue, setInputValue] = useState({
     username: "",
     NIK: "",
@@ -83,10 +94,11 @@ function Register() {
                 className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               >
                 {listBagian.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
+                  <option key={item._id} value={item.name}>
+                    {item.name}
                   </option>
                 ))}
+              
               </select>
               <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>

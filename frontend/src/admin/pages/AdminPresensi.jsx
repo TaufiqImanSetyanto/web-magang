@@ -5,12 +5,12 @@ import { useTheme } from "@table-library/react-table-library/theme";
 import { getTheme } from "../../utils/AdminPresensiThemeTable";
 import Loading from "../../components/Loading";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { listBagian } from "../../utils/Bagian";
 import Pagination from "../../components/Pagination";
 
 export default function AdminPresensi() {
   const [presensiList, setPresensiList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [listBagian,setListBagian] = useState([]);
   const [filterBagian, setFilterBagian] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
   const filteredPresensiList = presensiList.filter((presensi) => {
@@ -37,6 +37,14 @@ export default function AdminPresensi() {
   const data = { nodes: currentData };
   const theme = useTheme(getTheme);
   useEffect(() => {
+    async function fetchBagian() {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
+        setListBagian(data.bagian);
+      } catch (error) {
+        console.error("Error fetching bagian data:", error);
+      } 
+    }
     async function fetchPresensi() {
       try {
         setLoading(true);
@@ -48,6 +56,7 @@ export default function AdminPresensi() {
         setLoading(false);
       }
     }
+    fetchBagian()
     fetchPresensi();
   }, []);
   return (
@@ -63,8 +72,8 @@ export default function AdminPresensi() {
           >
             <option value={""}>Bagian</option>
             {listBagian.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item._id} value={item.name}>
+                {item.name}
               </option>
             ))}
           </select>

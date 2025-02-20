@@ -5,12 +5,12 @@ import profile from "../../assets/profile.png";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { listBagian } from "../../utils/Bagian";
 import Pagination from "../../components/Pagination";
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [allUser, setAllUser] = useState([]);
+  const [listBagian,setListBagian] = useState([]);
   const [filterBagian, setFilterBagian] = useState("");
   const filteredUser = allUser.filter((user) => {
     return filterBagian ? user.bagian === filterBagian : true;
@@ -34,6 +34,14 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    async function fetchBagian() {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
+        setListBagian(data.bagian);
+      } catch (error) {
+        console.error("Error fetching bagian data:", error);
+      } 
+    }
     async function fetchAllUser() {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/alluser`);
@@ -45,6 +53,7 @@ export default function AdminDashboard() {
         setLoading(false);
       }
     }
+    fetchBagian()
     fetchAllUser();
   }, []);
 
@@ -61,8 +70,8 @@ export default function AdminDashboard() {
           >
             <option value={""}>Bagian</option>
             {listBagian.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item._id} value={item.name}>
+                {item.name}
               </option>
             ))}
           </select>

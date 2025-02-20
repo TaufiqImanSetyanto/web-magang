@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Loading from "../../components/Loading";
-import { listBagian } from "../../utils/Bagian";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
@@ -10,6 +9,8 @@ import Input from "../../components/Input";
 
 export default function EditUser() {
   const { id } = useParams();
+  const [listBagian, setListBagian] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     username: "",
     NIK: "",
@@ -24,8 +25,15 @@ export default function EditUser() {
     bagian: "",
     tahunPengangkatan: "",
   });
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    async function fetchBagian() {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
+        setListBagian(data.bagian);
+      } catch (error) {
+        console.error("Error fetching bagian data:", error);
+      } 
+    }
     async function fetchUser() {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/user/${id}`);
@@ -37,6 +45,7 @@ export default function EditUser() {
         setLoading(false);
       }
     }
+    fetchBagian();
     fetchUser();
   }, [id]);
   function handleOnChange(e) {
@@ -106,8 +115,8 @@ export default function EditUser() {
                     className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
                   >
                     {listBagian.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
+                      <option key={item._id} value={item.name}>
+                        {item.name}
                       </option>
                     ))}
                   </select>
