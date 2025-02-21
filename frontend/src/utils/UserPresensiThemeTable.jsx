@@ -1,12 +1,12 @@
 export const getTheme = {
     Table: `
-    --data-table-library_grid-template-columns:  20% 20% 20% 20% 20%;
+    --data-table-library_grid-template-columns:  15% 15% 15% 15% 15% 40% 40%;
     max-height: calc(100vh - 216px);
     @media (max-width: 768px) {
-      --data-table-library_grid-template-columns: 30% 30% 30% 30% 30%;
+      --data-table-library_grid-template-columns: 30% 30% 30% 30% 30% 50% 50%;
     }
     @media (max-width: 480px) {
-      --data-table-library_grid-template-columns: 40% 40% 40% 40% 40%;
+      --data-table-library_grid-template-columns: 40% 40% 40% 40% 40% 60% 60%;
     }
     `,
     BaseCell: `

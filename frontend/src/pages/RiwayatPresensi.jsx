@@ -57,21 +57,25 @@ export default function RiwayatPresensi() {
             <>
               <Header>
                 <HeaderRow>
-                  <HeaderCell>Check In</HeaderCell>
-                  <HeaderCell>Check Out</HeaderCell>
                   <HeaderCell>Hari</HeaderCell>
                   <HeaderCell>Tanggal</HeaderCell>
                   <HeaderCell>Jadwal</HeaderCell>
+                  <HeaderCell>Check In</HeaderCell>
+                  <HeaderCell>Check Out</HeaderCell>
+                  <HeaderCell>Alamat In</HeaderCell>
+                  <HeaderCell>Alamat Out</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
                 {tableList.map((presensi) => (
                   <Row key={presensi._id} item={presensi}>
-                    <Cell>{presensi.checkInTime}</Cell>
-                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.day}</Cell>
                     <Cell>{presensi.date}</Cell>
-                    <Cell>{presensi.jadwal}</Cell>
+                    <Cell className="capitalize">{presensi.jadwal}</Cell>
+                    <Cell>{presensi.checkInTime}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
+                    <Cell>{presensi.addressIn}</Cell>
+                    <Cell>{presensi.addressOut}</Cell>
                   </Row>
                 ))}
               </Body>

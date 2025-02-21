@@ -96,11 +96,13 @@ export default function AdminPresensi() {
                 <HeaderRow>
                   <HeaderCell>Nama</HeaderCell>
                   <HeaderCell>Bagian</HeaderCell>
-                  <HeaderCell>Check In</HeaderCell>
-                  <HeaderCell>Check Out</HeaderCell>
                   <HeaderCell>Hari</HeaderCell>
                   <HeaderCell>Tanggal</HeaderCell>
                   <HeaderCell>Jadwal</HeaderCell>
+                  <HeaderCell>Check In</HeaderCell>
+                  <HeaderCell>Check Out</HeaderCell>
+                  <HeaderCell>Alamat In</HeaderCell>
+                  <HeaderCell>Alamat Out</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -108,11 +110,13 @@ export default function AdminPresensi() {
                   <Row key={presensi._id} item={presensi}>
                     <Cell>{presensi.userId.username}</Cell>
                     <Cell>{presensi.userId.bagian}</Cell>
-                    <Cell>{presensi.checkInTime}</Cell>
-                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.day}</Cell>
                     <Cell>{presensi.date}</Cell>
-                    <Cell>{presensi.jadwal}</Cell>
+                    <Cell className="capitalize">{presensi.jadwal}</Cell>
+                    <Cell>{presensi.checkInTime}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
+                    <Cell>{presensi.addressIn}</Cell>
+                    <Cell>{presensi.addressOut}</Cell>
                   </Row>
                 ))}
               </Body>

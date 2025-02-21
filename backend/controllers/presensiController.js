@@ -2,7 +2,7 @@ const Presensi = require("../models/presensiModel");
 
 async function checkIn(req, res) {
   try {
-    const { userId, locationIn, jadwal } = req.body;
+    const { userId, locationIn, jadwal, addressIn } = req.body;
     const today = new Date();
     const day = today.toLocaleDateString("id-ID", { weekday: "long" });
     const date = today.toISOString().split("T")[0];
@@ -17,7 +17,7 @@ async function checkIn(req, res) {
         message: "Kamu sudah check-in hari ini",
       });
     }
-    const presensi = await Presensi.create({ userId, locationIn, date, day, jadwal, checkInTime });
+    const presensi = await Presensi.create({ userId, locationIn, date, day, jadwal, checkInTime, addressIn });
     res.status(201).json({ success: true, message: "Berhasil check-in", presensi });
   } catch (error) {
     console.log(error);
@@ -26,14 +26,14 @@ async function checkIn(req, res) {
 
 async function checkOut(req, res) {
   try {
-    const { userId, locationOut } = req.body;
+    const { userId, locationOut, addressOut } = req.body;
 
     const today = new Date();
     const date = today.toISOString().split("T")[0];
 
     const presensi = await Presensi.findOne({
       userId,
-      date, 
+      date,
     });
 
     if (!presensi) {
@@ -49,6 +49,7 @@ async function checkOut(req, res) {
     }
 
     presensi.locationOut = locationOut;
+    presensi.addressOut = addressOut;
     presensi.checkOutTime = new Date().toTimeString().split(" ")[0];
     await presensi.save();
 

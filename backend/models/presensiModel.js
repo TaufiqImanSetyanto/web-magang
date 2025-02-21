@@ -18,6 +18,8 @@ const presensiSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
   },
+  addressIn: String,
+  addressOut: String,
 });
 
 module.exports = mongoose.model("Presensi", presensiSchema);

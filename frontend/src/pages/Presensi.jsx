@@ -33,11 +33,9 @@ export default function Presensi() {
     const getLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation({ latitude, longitude });
             setLoadingFetch(false);
           },
           (error) => {
@@ -68,24 +66,38 @@ export default function Presensi() {
     return R * c;
   };
 
+  const getAddress = async (latitude, longitude) => {
+    try {
+      const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
+      return data.results[2]?.formatted_address || "Alamat tidak ditemukan";
+    } catch (error) {
+      console.error("Error getting address:", error);
+      return "Alamat tidak ditemukan";
+    }
+  };
+
   const handleCheckIn = async () => {
     setLoadingCheckIn(true);
-    const nearestOffice = officeLocation.reduce((prev, curr) => {
-      const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
-      const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
-      return prevDistance < currDistance ? prev : curr;
-    });
-    const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
-    if (distance > nearestOffice.allowedDistance) {
-      setLoadingCheckIn(false);
-      handleError("Kamu terlalu jauh dari kantor untuk check-in");
-      return;
+    if (jadwal !== "dinas kebun" && jadwal !== "dinas luar") {
+      const nearestOffice = officeLocation.reduce((prev, curr) => {
+        const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
+        const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
+        return prevDistance < currDistance ? prev : curr;
+      });
+      const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
+      if (distance > nearestOffice.allowedDistance) {
+        setLoadingCheckIn(false);
+        handleError("Kamu terlalu jauh dari kantor untuk check-in");
+        return;
+      }
     }
     try {
+      const addressIn = await getAddress(location.latitude, location.longitude);
       const checkIn = {
         userId,
         jadwal,
         locationIn: location,
+        addressIn,
       };
       const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/presensi/checkin`, checkIn);
       const { success, message } = data;
@@ -104,21 +116,25 @@ export default function Presensi() {
 
   const handleCheckOut = async () => {
     setLoadingCheckOut(true);
-    const nearestOffice = officeLocation.reduce((prev, curr) => {
-      const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
-      const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
-      return prevDistance < currDistance ? prev : curr;
-    });
-    const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
-    if (distance > nearestOffice.allowedDistance) {
-      setLoadingCheckOut(false);
-      handleError("Kamu terlalu jauh dari kantor untuk check-out");
-      return;
+    if (jadwal !== "dinas kebun" && jadwal !== "dinas luar") {
+      const nearestOffice = officeLocation.reduce((prev, curr) => {
+        const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
+        const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
+        return prevDistance < currDistance ? prev : curr;
+      });
+      const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
+      if (distance > nearestOffice.allowedDistance) {
+        setLoadingCheckOut(false);
+        handleError("Kamu terlalu jauh dari kantor untuk check-out");
+        return;
+      }
     }
     try {
+      const addressOut = await getAddress(location.latitude, location.longitude);
       const checkOut = {
         userId,
         locationOut: location,
+        addressOut,
       };
       const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/presensi/checkout`, checkOut);
       const { success, message } = data;
@@ -176,6 +192,11 @@ export default function Presensi() {
               >
                 <option value="07:00 - 15:00">07:00 - 15:00</option>
                 <option value="07:00 - 12:00">07:00 - 12:00</option>
+                <option value="shift pagi">Shift Pagi</option>
+                <option value="shift siang">Shift Siang</option>
+                <option value="shift malam">Shift Malam</option>
+                <option value="dinas kebun">Dinas Kebun</option>
+                <option value="dinas luar">Dinas Luar</option>
               </select>
               <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>
@@ -186,10 +207,10 @@ export default function Presensi() {
           </div>
           <div className="flex space-x-10">
             <button onClick={handleCheckIn} disabled={loadingCheckIn || loadingCheckOut} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
-              {loadingCheckIn? <Spinner/> : "Check In"}
+              {loadingCheckIn ? <Spinner /> : "Check In"}
             </button>
             <button onClick={handleCheckOut} disabled={loadingCheckIn || loadingCheckOut} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
-              {loadingCheckOut? <Spinner/> : "Check Out"}
+              {loadingCheckOut ? <Spinner /> : "Check Out"}
             </button>
           </div>
         </div>
