@@ -6,11 +6,12 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
 import Information from "../components/Information";
 import Input from "../components/Input";
+import Spinner from "../components/Spinner";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const id = user?._id;
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState({
     oldPassword: "",
@@ -27,12 +28,11 @@ export default function Dashboard() {
 
   const handleChangePassword = async () => {
     try {
-      setLoading(true);
+      setLoadingSubmit(true);
       const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/auth/changepassword/${id}`, {
         oldPassword,
         newPassword,
       });
-      console.log(data);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
@@ -43,7 +43,7 @@ export default function Dashboard() {
       console.error(error);
       handleError(error.response.data.message);
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
       setInputValue({
         ...inputValue,
         oldPassword: "",
@@ -94,10 +94,10 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={handleChangePassword}
-                  disabled={loading}
+                  disabled={loadingSubmit}
                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
-                  {loading ? "Mengubah..." : "Ganti Password"}
+                  {loadingSubmit ? <Spinner/> : "Ganti Password"}
                 </button>
                 <button
                   type="button"

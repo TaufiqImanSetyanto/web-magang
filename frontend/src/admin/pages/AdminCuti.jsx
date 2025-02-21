@@ -8,10 +8,12 @@ import { getTheme } from "../../utils/AdminCutiThemeTable";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
+import Spinner from "../../components/Spinner";
 
 export default function AdminCuti() {
   const [cutiPendingList, setCutiPendingList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const [loadingSubmit, setloadingSubmit] = useState(false);
   const data = { nodes: cutiPendingList };
   const theme = useTheme(getTheme);
   const [open, setOpen] = useState(false);
@@ -19,19 +21,20 @@ export default function AdminCuti() {
   useEffect(() => {
     async function fetchCutiPending() {
       try {
-        setLoading(true);
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listcuti`);
         setCutiPendingList(data.cutiPending.reverse());
       } catch (error) {
         console.error("Error fetching cuti list:", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchCutiPending();
   }, []);
   async function handleDecision(id, status) {
     try {
+      setloadingSubmit(true);
       const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/admin/kelolacuti/${id}`, { status });
       const { success, message } = data;
       if (success) {
@@ -44,12 +47,14 @@ export default function AdminCuti() {
     } catch (error) {
       console.error(error);
       handleError(error.response.data.message);
+    } finally {
+      setloadingSubmit(false);
     }
   }
   return (
     <div>
       <h2 className="text-xl font-bold text-gray-900 mb-4">Kelola Cuti</h2>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : cutiPendingList.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
@@ -125,9 +130,10 @@ export default function AdminCuti() {
                 <button
                   type="button"
                   onClick={() => handleDecision(selectedCuti, "accepted")}
+                  disabled={loadingSubmit}
                   className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-800 sm:ml-3 sm:w-auto"
                 >
-                  Ya, Setujui
+                  {loadingSubmit ? <Spinner /> : "Ya, Setujui"}
                 </button>
                 <button
                   type="button"

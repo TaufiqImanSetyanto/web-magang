@@ -9,7 +9,7 @@ import Pagination from "../../components/Pagination";
 
 export default function AdminPresensi() {
   const [presensiList, setPresensiList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(true);
   const [listBagian,setListBagian] = useState([]);
   const [filterBagian, setFilterBagian] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
@@ -47,13 +47,13 @@ export default function AdminPresensi() {
     }
     async function fetchPresensi() {
       try {
-        setLoading(true);
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listpresensi`);
         setPresensiList(data.presensi.reverse());
       } catch (error) {
         console.error("Error fetching presensi list:", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchBagian()
@@ -86,7 +86,7 @@ export default function AdminPresensi() {
           />
         </div>
       </div>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : presensiList.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>

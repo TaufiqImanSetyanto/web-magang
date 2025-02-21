@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination";
 export default function RiwayatPresensi() {
   const { user } = useAuth();
   const userId = user?._id;
-  const [loading, setLoading] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(true);
   const [listRiwayatPresensi, setListRiwayatPresensi] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,13 +35,13 @@ export default function RiwayatPresensi() {
   useEffect(() => {
     async function fetchPresensi() {
       try {
-        setLoading(true);
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/presensi/riwayatpresensi/${userId}`);
         setListRiwayatPresensi(data.riwayatPresensi.reverse());
       } catch (error) {
         console.error("Error fetching presensi", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchPresensi();
@@ -49,7 +49,7 @@ export default function RiwayatPresensi() {
   return (
     <>
       <h2 className="font-bold text-xl text-gray-900">Riwayat Presensi</h2>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : listRiwayatPresensi.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>

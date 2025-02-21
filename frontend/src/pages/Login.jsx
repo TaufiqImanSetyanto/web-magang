@@ -6,10 +6,12 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
 import { useAuth } from "../contexts/authContext";
 import Input from "../components/Input";
+import Spinner from "../components/Spinner";
 
 function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [inputValue, setInputValue] = useState({
     NIK: "",
     password: "",
@@ -25,6 +27,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoadingSubmit(true);
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
@@ -57,6 +60,8 @@ function Login() {
     } catch (error) {
       console.error(error);
       handleError(error.response.data.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
   return (
@@ -73,9 +78,10 @@ function Login() {
           <div>
             <button
               type="submit"
+              disabled={loadingSubmit}
               className="flex w-full justify-center rounded-md bg-sky-900 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
             >
-              Masuk
+              {loadingSubmit ? <Spinner /> : "Masuk"}
             </button>
           </div>
         </form>

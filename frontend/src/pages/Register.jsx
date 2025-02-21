@@ -7,12 +7,14 @@ import { handleError, handleSuccess } from "../components/HandleNotif";
 import { useAuth } from "../contexts/authContext";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Input from "../components/Input";
+import Spinner from "../components/Spinner";
 
 function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [listBagian, setListBagian] = useState([]);
-  useEffect(()=>{
+  useEffect(() => {
     const fetchBagian = async () => {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
@@ -20,9 +22,9 @@ function Register() {
       } catch (error) {
         console.error("Error fetching bagian data:", error);
       }
-    }
-    fetchBagian()
-  },[])
+    };
+    fetchBagian();
+  }, []);
   const [inputValue, setInputValue] = useState({
     username: "",
     NIK: "",
@@ -39,6 +41,7 @@ function Register() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoadingSubmit(true);
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
@@ -67,6 +70,8 @@ function Register() {
     } catch (error) {
       console.error(error);
       handleError(error.response.data.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -98,7 +103,6 @@ function Register() {
                     {item.name}
                   </option>
                 ))}
-              
               </select>
               <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>
@@ -107,9 +111,10 @@ function Register() {
           <div>
             <button
               type="submit"
+              disabled={loadingSubmit}
               className="mt-7 flex w-full justify-center rounded-md bg-sky-900 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
             >
-              Daftar
+              {loadingSubmit ? <Spinner /> : "Daftar"}
             </button>
           </div>
         </form>

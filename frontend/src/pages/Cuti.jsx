@@ -5,12 +5,13 @@ import { useAuth } from "../contexts/authContext";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
 import Input from "../components/Input";
+import Spinner from "../components/Spinner";
 
 export default function Cuti() {
   const { user } = useAuth();
   const userId = user?._id;
   const username = user?.username;
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [dates, setDates] = useState([{ id: Date.now(), date: "" }]);
   const [inputValue, setInputValue] = useState({
     jenisCuti: "tahunan",
@@ -38,7 +39,7 @@ export default function Cuti() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoadingSubmit(true);
     try {
       const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cuti/ambilcuti`, {
         userId,
@@ -63,7 +64,7 @@ export default function Cuti() {
       console.error(error);
       handleError(error.response.data.message);
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
     }
   };
   return (
@@ -126,8 +127,8 @@ export default function Cuti() {
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button disabled={loading} type="submit" className="rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
-            {loading ? <div className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div> : <div>Submit</div>}
+          <button disabled={loadingSubmit} type="submit" className="rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
+            {loadingSubmit ? <Spinner/> : <div>Submit</div>}
           </button>
         </div>
       </form>

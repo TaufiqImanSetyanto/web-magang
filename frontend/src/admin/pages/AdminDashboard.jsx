@@ -8,7 +8,7 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Pagination from "../../components/Pagination";
 
 export default function AdminDashboard() {
-  const [loading, setLoading] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(true);
   const [allUser, setAllUser] = useState([]);
   const [listBagian,setListBagian] = useState([]);
   const [filterBagian, setFilterBagian] = useState("");
@@ -44,13 +44,14 @@ export default function AdminDashboard() {
     }
     async function fetchAllUser() {
       try {
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/alluser`);
         const { allUser } = data;
         setAllUser(allUser);
       } catch (error) {
         console.error("Error fetching all user", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchBagian()
@@ -79,7 +80,7 @@ export default function AdminDashboard() {
         </div>
       </div>
       <div className="md:py-2 px-6  md:m-4 shadow-md">
-        {loading ? (
+        {loadingFetch ? (
           <Loading />
         ) : (
           <>

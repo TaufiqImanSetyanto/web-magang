@@ -5,20 +5,23 @@ import { ChevronDownIcon, ExclamationTriangleIcon } from "@heroicons/react/16/so
 import Loading from "../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
+import Spinner from "../components/Spinner";
 
 export default function Presensi() {
   const { user } = useAuth();
   const userId = user._id;
   const [location, setLocation] = useState();
   const [officeLocation, setOfficeLocation] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const [loadingCheckIn, setLoadingCheckIn] = useState(false);
+  const [loadingCheckOut, setLoadingCheckOut] = useState(false);
   const [jadwal, setJadwal] = useState("07:00 - 15:00");
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const date = new Date().toLocaleString("id-ID");
   const showDate = date.split(",")[0];
   const showTime = date.split(",")[1];
   useEffect(() => {
-     const fetchOffice = async () => {
+    const fetchOffice = async () => {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listoffice`);
         setOfficeLocation(data.office);
@@ -35,16 +38,16 @@ export default function Presensi() {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
             });
-            setLoading(false);
+            setLoadingFetch(false);
           },
           (error) => {
             console.error("Error getting location:", error);
-            setLoading(false);
+            setLoadingFetch(false);
           }
         );
       } else {
         console.error("Geolocation is not supported by this browser");
-        setLoading(false);
+        setLoadingFetch(false);
       }
     };
     fetchOffice();
@@ -66,6 +69,7 @@ export default function Presensi() {
   };
 
   const handleCheckIn = async () => {
+    setLoadingCheckIn(true);
     const nearestOffice = officeLocation.reduce((prev, curr) => {
       const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
       const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
@@ -73,6 +77,7 @@ export default function Presensi() {
     });
     const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
     if (distance > nearestOffice.allowedDistance) {
+      setLoadingCheckIn(false);
       handleError("Kamu terlalu jauh dari kantor untuk check-in");
       return;
     }
@@ -92,10 +97,13 @@ export default function Presensi() {
     } catch (error) {
       console.error(error);
       handleError(error.response.data.message);
+    } finally {
+      setLoadingCheckIn(false);
     }
   };
 
   const handleCheckOut = async () => {
+    setLoadingCheckOut(true);
     const nearestOffice = officeLocation.reduce((prev, curr) => {
       const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
       const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
@@ -103,6 +111,7 @@ export default function Presensi() {
     });
     const distance = calculateDistance(location.latitude, location.longitude, nearestOffice.latitude, nearestOffice.longitude);
     if (distance > nearestOffice.allowedDistance) {
+      setLoadingCheckOut(false);
       handleError("Kamu terlalu jauh dari kantor untuk check-out");
       return;
     }
@@ -121,12 +130,14 @@ export default function Presensi() {
     } catch (error) {
       console.error(error);
       handleError(error.response.data.message);
+    } finally {
+      setLoadingCheckOut(false);
     }
   };
   return (
     <div>
       <h2 className="font-bold text-xl text-gray-900">Presensi</h2>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : (
         <div className="mb-5 space-y-2">
@@ -174,11 +185,11 @@ export default function Presensi() {
             <p className="text-yellow-500 font-bold text-sm">Hanya bisa 1 kali check-in ataupun check-out perhari</p>
           </div>
           <div className="flex space-x-10">
-            <button onClick={handleCheckIn} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
-              Check In
+            <button onClick={handleCheckIn} disabled={loadingCheckIn || loadingCheckOut} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+              {loadingCheckIn? <Spinner/> : "Check In"}
             </button>
-            <button onClick={handleCheckOut} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
-              Check Out
+            <button onClick={handleCheckOut} disabled={loadingCheckIn || loadingCheckOut} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+              {loadingCheckOut? <Spinner/> : "Check Out"}
             </button>
           </div>
         </div>

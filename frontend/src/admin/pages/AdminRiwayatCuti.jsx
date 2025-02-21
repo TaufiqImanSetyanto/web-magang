@@ -14,7 +14,7 @@ import Pagination from "../../components/Pagination";
 
 export default function RiwayatCuti() {
   const [cutiList, setCutiList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingFetch, setLoadingFetch] = useState(true);
   const [filterJenis, setFilterJenis] = useState("");
   const [filterTahun, setFilterTahun] = useState("");
 
@@ -45,13 +45,13 @@ export default function RiwayatCuti() {
   useEffect(() => {
     async function fetchCuti() {
       try {
-        setLoading(true);
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/riwayatcuti`);
         setCutiList(data.acceptedCuti.reverse());
       } catch (error) {
         console.error("Error fetching cuti list", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchCuti();
@@ -99,7 +99,7 @@ export default function RiwayatCuti() {
           <ChevronDownIcon className="pointer-events-none col-start-2 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
         </div>
       </div>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : cutiList.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>

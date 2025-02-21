@@ -6,7 +6,7 @@ export const getTheme = {
       --data-table-library_grid-template-columns: 30% 25% 40% 20% 20% 30%;
     }
     @media (max-width: 480px) {
-      --data-table-library_grid-template-columns: 40% 30% 50% 25% 25% 30%;
+      --data-table-library_grid-template-columns: 40% 30% 50% 25% 25% 40%;
     }
     `,
     BaseCell: `

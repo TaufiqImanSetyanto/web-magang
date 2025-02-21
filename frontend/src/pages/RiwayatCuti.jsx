@@ -18,7 +18,7 @@ export default function RiwayatCuti() {
   const { user } = useAuth();
   const userId = user?._id;
   const [cutiList, setCutiList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingFetch, setLoadingFetch] = useState(true);
   const [filterJenis, setFilterJenis] = useState("");
   const [filterTahun, setFilterTahun] = useState("");
 
@@ -49,13 +49,13 @@ export default function RiwayatCuti() {
   useEffect(() => {
     async function fetchCuti() {
       try {
-        setLoading(true);
+        setLoadingFetch(true);
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/cuti/riwayatcuti/${userId}`);
         setCutiList(data.cuti.reverse());
       } catch (error) {
         console.error("Error fetching cuti", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchCuti();
@@ -63,7 +63,6 @@ export default function RiwayatCuti() {
 
   async function handleDownloadCutiPDF(cuti) {
     try {
-      console.log(cuti)
       const blob = await pdf(<CutiPDF cuti={cuti} user={cuti.userId} />).toBlob();
       saveAs(blob, `Permohonancuti_${cuti.userId.username}_${cuti.dates[0]?.date}.pdf`);
       handleSuccess("Berhasil mengunduh Cuti PDF");
@@ -104,7 +103,7 @@ export default function RiwayatCuti() {
           <ChevronDownIcon className="pointer-events-none col-start-2 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
         </div>
       </div>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : cutiList.length > 0 ? (
         <Table data={data} theme={theme} layout={{ fixedHeader: true, custom: true, horizontalScroll: true }}>
@@ -133,7 +132,7 @@ export default function RiwayatCuti() {
                     <Cell>{cuti.daysRequested} Hari</Cell>
                     <Cell className={statusColors[cuti.status]}>{cuti.status}</Cell>
                     <Cell>
-                      <button onClick={() => handleDownloadCutiPDF(cuti)} className={cuti.status === "accepted" ? "hover:cursor-pointer hover:bg-sky-700 py-0.5 px-3 text-white bg-sky-800 rounded text-sm" : "hover:cursor-not-allowed py-0.5 px-3 text-gray-700 bg-gray-300 rounded text-sm"} disabled={cuti.status !== "accepted"}>
+                      <button onClick={() => handleDownloadCutiPDF(cuti)} className={cuti.status === "accepted" ? "hover:cursor-pointer hover:bg-sky-700 py-0.5 px-3 text-white bg-sky-800 rounded text-sm" : "hover:cursor-not-allowed py-0.5 px-3 text-gray-500 bg-gray-300 rounded text-sm"} disabled={cuti.status !== "accepted"}>
                         Download PDF
                       </button>
                     </Cell>
