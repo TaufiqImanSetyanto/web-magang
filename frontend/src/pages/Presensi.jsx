@@ -15,11 +15,17 @@ export default function Presensi() {
   const [loadingFetch, setLoadingFetch] = useState(true);
   const [loadingCheckIn, setLoadingCheckIn] = useState(false);
   const [loadingCheckOut, setLoadingCheckOut] = useState(false);
-  const [jadwal, setJadwal] = useState("07:00 - 15:00");
+  const [jadwal, setJadwal] = useState("");
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const date = new Date().toLocaleString("id-ID");
-  const showDate = date.split(",")[0];
-  const showTime = date.split(",")[1];
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleString("id-ID"));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleString("id-ID"));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
   useEffect(() => {
     const fetchOffice = async () => {
       try {
@@ -69,14 +75,18 @@ export default function Presensi() {
   const getAddress = async (latitude, longitude) => {
     try {
       const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
-      return data.results[2]?.formatted_address || "Alamat tidak ditemukan";
+      return data.results[7]?.formatted_address || "Alamat tidak ditemukan";
     } catch (error) {
       console.error("Error getting address:", error);
-      return "Alamat tidak ditemukan";
+      return "Error saat mengambil alamat";
     }
   };
 
   const handleCheckIn = async () => {
+    if (!jadwal) {
+      handleError("Pilih jadwal terlebih dahulu");
+      return;
+    }
     setLoadingCheckIn(true);
     if (jadwal !== "dinas kebun" && jadwal !== "dinas luar") {
       const nearestOffice = officeLocation.reduce((prev, curr) => {
@@ -164,8 +174,8 @@ export default function Presensi() {
             </div>
             <div className="flex self-center">
               <div className="border-2 rounded-md border-sky-500 flex gap-2 p-1 text-lg text-sky-600 font-bold">
-                <div>{showDate}</div>
-                <div>{showTime}</div>
+                <div>{currentTime.split(",")[0]}</div>
+                <div>{currentTime.split(",")[1]}</div>
               </div>
             </div>
           </div>
