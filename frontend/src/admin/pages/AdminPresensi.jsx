@@ -69,13 +69,13 @@ export default function AdminPresensi() {
       { header: "Tanggal", key: "date" },
       { header: "Jadwal", key: "jadwal" },
       { header: "Check In", key: "checkInTime" },
-      { header: "Check Out", key: "checkOutTime" },
       { header: "Latitude In", key: "locationIn.latitude" },
       { header: "Longitude In", key: "locationIn.longitude" },
+      { header: "Lokasi In", key: "addressIn" },
+      { header: "Check Out", key: "checkOutTime" },
       { header: "Latitude Out", key: "locationOut.latitude" },
       { header: "Longitude Out", key: "locationOut.longitude" },
-      { header: "Alamat In", key: "addressIn" },
-      { header: "Alamat Out", key: "addressOut" },
+      { header: "Lokasi Out", key: "addressOut" },
     ];
 
     const dataWithHeaders = filteredPresensiList.map((item) => {
@@ -139,9 +139,9 @@ export default function AdminPresensi() {
                   <HeaderCell>Tanggal</HeaderCell>
                   <HeaderCell>Jadwal</HeaderCell>
                   <HeaderCell>Check In</HeaderCell>
+                  <HeaderCell>Lokasi In</HeaderCell>
                   <HeaderCell>Check Out</HeaderCell>
-                  <HeaderCell>Alamat In</HeaderCell>
-                  <HeaderCell>Alamat Out</HeaderCell>
+                  <HeaderCell>Lokasi Out</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -151,10 +151,10 @@ export default function AdminPresensi() {
                     <Cell>{presensi.userId.bagian}</Cell>
                     <Cell>{presensi.day}</Cell>
                     <Cell>{presensi.date}</Cell>
-                    <Cell className="capitalize">{presensi.jadwal}</Cell>
+                    <Cell>{presensi.jadwal}</Cell>
                     <Cell>{presensi.checkInTime}</Cell>
-                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.addressIn}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.addressOut}</Cell>
                   </Row>
                 ))}
