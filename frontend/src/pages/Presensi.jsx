@@ -84,11 +84,11 @@ export default function Presensi() {
   };
 
   const handleCheckIn = async () => {
-    setLoadingCheckIn(true);
     if (!jadwal) {
       handleError("Pilih jadwal terlebih dahulu");
       return;
     }
+    setLoadingCheckIn(true);
     if (jadwal !== "Dinas Kebun" && jadwal !== "Dinas Luar") {
       const nearestOffice = officeLocation.reduce((prev, curr) => {
         const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
@@ -201,6 +201,7 @@ export default function Presensi() {
                 onChange={(e) => setJadwal(e.target.value)}
                 className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               >
+                <option value="">Jadwal</option>
                 <option value="07:00 - 15:00">07:00 - 15:00</option>
                 <option value="07:00 - 12:00">07:00 - 12:00</option>
                 <option value="Shift Pagi">Shift Pagi</option>
