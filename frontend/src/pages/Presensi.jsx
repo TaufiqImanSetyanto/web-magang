@@ -75,7 +75,8 @@ export default function Presensi() {
   const getAddress = async (latitude, longitude) => {
     try {
       const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
-      return data.results[7]?.formatted_address || "Alamat tidak ditemukan";
+      console.log(data)
+      return data.results[5]?.formatted_address || "Alamat tidak ditemukan";
     } catch (error) {
       console.error("Error getting address:", error);
       return "Error saat mengambil alamat";
@@ -83,12 +84,12 @@ export default function Presensi() {
   };
 
   const handleCheckIn = async () => {
+    setLoadingCheckIn(true);
     if (!jadwal) {
       handleError("Pilih jadwal terlebih dahulu");
       return;
     }
-    setLoadingCheckIn(true);
-    if (jadwal !== "dinas kebun" && jadwal !== "dinas luar") {
+    if (jadwal !== "Dinas Kebun" && jadwal !== "Dinas Luar") {
       const nearestOffice = officeLocation.reduce((prev, curr) => {
         const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
         const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
@@ -126,7 +127,7 @@ export default function Presensi() {
 
   const handleCheckOut = async () => {
     setLoadingCheckOut(true);
-    if (jadwal !== "dinas kebun" && jadwal !== "dinas luar") {
+    if (jadwal !== "Dinas Kebun" && jadwal !== "Dinas Luar") {
       const nearestOffice = officeLocation.reduce((prev, curr) => {
         const prevDistance = calculateDistance(location.latitude, location.longitude, prev.latitude, prev.longitude);
         const currDistance = calculateDistance(location.latitude, location.longitude, curr.latitude, curr.longitude);
@@ -202,11 +203,11 @@ export default function Presensi() {
               >
                 <option value="07:00 - 15:00">07:00 - 15:00</option>
                 <option value="07:00 - 12:00">07:00 - 12:00</option>
-                <option value="shift pagi">Shift Pagi</option>
-                <option value="shift siang">Shift Siang</option>
-                <option value="shift malam">Shift Malam</option>
-                <option value="dinas kebun">Dinas Kebun</option>
-                <option value="dinas luar">Dinas Luar</option>
+                <option value="Shift Pagi">Shift Pagi</option>
+                <option value="Shift Siang">Shift Siang</option>
+                <option value="Shift Malam">Shift Malam</option>
+                <option value="Dinas Kebun">Dinas Kebun</option>
+                <option value="Dinas Luar">Dinas Luar</option>
               </select>
               <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>

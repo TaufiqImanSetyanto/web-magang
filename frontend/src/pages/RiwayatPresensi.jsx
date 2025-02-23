@@ -61,9 +61,9 @@ export default function RiwayatPresensi() {
                   <HeaderCell>Tanggal</HeaderCell>
                   <HeaderCell>Jadwal</HeaderCell>
                   <HeaderCell>Check In</HeaderCell>
+                  <HeaderCell>Lokasi In</HeaderCell>
                   <HeaderCell>Check Out</HeaderCell>
-                  <HeaderCell>Alamat In</HeaderCell>
-                  <HeaderCell>Alamat Out</HeaderCell>
+                  <HeaderCell>Lokasi Out</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -71,10 +71,10 @@ export default function RiwayatPresensi() {
                   <Row key={presensi._id} item={presensi}>
                     <Cell>{presensi.day}</Cell>
                     <Cell>{presensi.date}</Cell>
-                    <Cell className="capitalize">{presensi.jadwal}</Cell>
+                    <Cell>{presensi.jadwal}</Cell>
                     <Cell>{presensi.checkInTime}</Cell>
-                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.addressIn}</Cell>
+                    <Cell>{presensi.checkOutTime}</Cell>
                     <Cell>{presensi.addressOut}</Cell>
                   </Row>
                 ))}
