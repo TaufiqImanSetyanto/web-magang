@@ -9,8 +9,11 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/re
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
 import Spinner from "../../components/Spinner";
+import { useAuth } from "../../contexts/authContext";
 
 export default function KelolaCuti() {
+  const { user } = useAuth();
+  const bagian = user?.bagian;
   const [cutiPendingList, setCutiPendingList] = useState([]);
   const [loadingFetch, setLoadingFetch] = useState(true);
   const [loadingSubmit, setloadingSubmit] = useState(false);
@@ -22,7 +25,7 @@ export default function KelolaCuti() {
     async function fetchCutiPending() {
       try {
         setLoadingFetch(true);
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/asisten/listcuti`);
+        const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/asisten/listcuti`, { bagian });
         setCutiPendingList(data.cutiPending.reverse());
       } catch (error) {
         console.error("Error fetching cuti list:", error);
@@ -31,7 +34,7 @@ export default function KelolaCuti() {
       }
     }
     fetchCutiPending();
-  }, []);
+  }, [bagian]);
   async function handleDecision(id, status) {
     try {
       setloadingSubmit(true);

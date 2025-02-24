@@ -3,7 +3,13 @@ const Cuti = require("../models/cutiModel");
 
 async function listCutiPending(req, res) {
   try {
-    const cutiPending = await Cuti.find({ semiStatus: "pending" }).populate("userId");
+    const { bagian } = req.body;
+    if (!bagian) {
+      return res.status(400).json({ message: "Bagian tidak ditemukan" });
+    }
+    const cutiPending = await Cuti.find({ semiStatus: "pending" })
+      .populate("userId")
+      .then((cutiList) => cutiList.filter((cuti) => cuti.userId?.bagian === bagian));
     if (!cutiPending) {
       res.status(404).json({ message: "Tidak ada yang mengajukan cuti" });
     }
