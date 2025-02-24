@@ -74,7 +74,7 @@ export default function Presensi() {
 
   const getAddress = async (latitude, longitude) => {
     try {
-      const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&result_type=administrative_area_level_4|political&key=${apiKey}`);
+      const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&result_type=route&key=${apiKey}`);
       return data.results[0]?.formatted_address || "Alamat tidak ditemukan";
     } catch (error) {
       console.error("Error getting address:", error);
