@@ -10,6 +10,8 @@ const cutiRoute = require("./routes/cutiRoute");
 const adminRoute = require("./routes/adminRoute");
 const presensiRoute = require("./routes/presensiRoute");
 const dataRoute = require("./routes/dataRoute");
+const asistenRoute = require("./routes/asistenRoute");
+const manajerRoute = require("./routes/manajerRoute");
 
 mongoose
   .connect(MONGODB_URL)
@@ -33,3 +35,5 @@ app.use("/cuti", cutiRoute);
 app.use("/admin", adminRoute);
 app.use("/presensi", presensiRoute)
 app.use("/data", dataRoute)
+app.use("/asisten", asistenRoute)
+app.use("/manajer", manajerRoute)

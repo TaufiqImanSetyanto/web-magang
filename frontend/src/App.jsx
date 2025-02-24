@@ -9,13 +9,16 @@ import Unauthorized from "./pages/Unauthorized"
 import RoleBasedRoutes from "./utils/RoleBasedRoutes";
 import AdminDashboard from "./admin/pages/AdminDashboard"
 import AdminLayout from "./admin/layouts/AdminLayout"
-import AdminCuti from "./admin/pages/AdminCuti"
 import EditUser from "./admin/pages/EditUser"
 import AdminRiwayatCuti from "./admin/pages/AdminRiwayatCuti";
 import Presensi from "./pages/Presensi"
 import AdminPresensi from "./admin/pages/AdminPresensi";
 import RiwayatPresensi from "./pages/RiwayatPresensi";
 import RiwayatCuti from "./pages/RiwayatCuti";
+import AsistenLayout from "./asisten/layouts/Layout";
+import AsistenKelolaCuti from "./asisten/pages/KelolaCuti"
+import ManajerLayout from "./manajer/layouts/Layout";
+import ManajerKelolaCuti from "./manajer/pages/KelolaCuti"
 
 function App() {
   return (
@@ -47,9 +50,38 @@ function App() {
         >
            <Route index element={<AdminDashboard />} />
            <Route path="kelolapresensi" element={<AdminPresensi />} />
-           <Route path="kelolacuti" element={<AdminCuti />} />
            <Route path="riwayatcuti" element={<AdminRiwayatCuti/>}/>
            <Route path="edituser/:id" element={<EditUser/>} />
+        </Route>
+        <Route
+          path="/asisten"
+          element={
+            <RoleBasedRoutes requiredRole={"asisten"}>
+              <AsistenLayout />
+            </RoleBasedRoutes>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="presensi" element={<Presensi />} />
+          <Route path="presensi/riwayat" element={<RiwayatPresensi />} />
+          <Route path="cuti" element={<Cuti />} />
+          <Route path="cuti/riwayat" element={<RiwayatCuti />} />
+          <Route path="kelolacuti" element={<AsistenKelolaCuti />} />
+        </Route>
+        <Route
+          path="/manajer"
+          element={
+            <RoleBasedRoutes requiredRole={"manajer"}>
+              <ManajerLayout />
+            </RoleBasedRoutes>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="presensi" element={<Presensi />} />
+          <Route path="presensi/riwayat" element={<RiwayatPresensi />} />
+          <Route path="cuti" element={<Cuti />} />
+          <Route path="cuti/riwayat" element={<RiwayatCuti />} />
+          <Route path="kelolacuti" element={<ManajerKelolaCuti />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized/>} />
         <Route path="*" element={<NotFound />} />

@@ -130,9 +130,9 @@ export default function RiwayatCuti() {
                     </Cell>
                     <Cell>{cuti.reason}</Cell>
                     <Cell>{cuti.daysRequested} Hari</Cell>
-                    <Cell className={statusColors[cuti.status]}>{cuti.status}</Cell>
+                    <Cell className={statusColors[cuti.finalStatus]}>{cuti.finalStatus}</Cell>
                     <Cell>
-                      <button onClick={() => handleDownloadCutiPDF(cuti)} className={cuti.status === "accepted" ? "hover:cursor-pointer hover:bg-sky-700 py-0.5 px-3 text-white bg-sky-800 rounded text-sm" : "hover:cursor-not-allowed py-0.5 px-3 text-gray-500 bg-gray-300 rounded text-sm"} disabled={cuti.status !== "accepted"}>
+                      <button onClick={() => handleDownloadCutiPDF(cuti)} className={cuti.finalStatus === "accepted" ? "hover:cursor-pointer hover:bg-sky-700 py-0.5 px-3 text-white bg-sky-800 rounded text-sm" : "hover:cursor-not-allowed py-0.5 px-3 text-gray-500 bg-gray-300 rounded text-sm"} disabled={cuti.finalStatus !== "accepted"}>
                         Download PDF
                       </button>
                     </Cell>

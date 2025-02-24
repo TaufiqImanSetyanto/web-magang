@@ -11,32 +11,63 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function AdminLayout() {
+export default function Layout() {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
-    { name: "Dashboard", href: "/admin", current: true },
-    { name: "Kelola Presensi", href: "/admin/kelolapresensi", current: false },
-    { name: "Riwayat Cuti", href: "/admin/riwayatcuti", current: false },
+    { name: "Dashboard", href: "/manajer", current: true },
+    {
+      name: "Presensi",
+      href: "/manajer/presensi",
+      current: false,
+      subNav: [
+        { name: "Presensi", href: "/manajer/presensi", current: false },
+        { name: "Riwayat Presensi", href: "/manajer/presensi/riwayat", current: false },
+      ],
+    },
+    {
+      name: "Cuti",
+      href: "/manajer/cuti",
+      current: false,
+      subNav: [
+        { name: "Ambil Cuti", href: "/manajer/cuti", current: false },
+        { name: "Riwayat Cuti", href: "/manajer/cuti/riwayat", current: false },
+      ],
+    },
+     { name: "Kelola Cuti", href: "/manajer/kelolacuti", current: false },
   ]);
 
   const handleNavClick = (clickedHref) => {
     setNavigation((prevNav) =>
-      prevNav.map((item) => ({
-        ...item,
-        current: item.href === clickedHref,
-      }))
+      prevNav.map((item) => {
+        const isCurrent = item.href === clickedHref || item.subNav?.some((subItem) => subItem.href === clickedHref);
+        return {
+          ...item,
+          current: isCurrent,
+          subNav: item.subNav?.map((subItem) => ({
+            ...subItem,
+            current: subItem.href === clickedHref,
+          })),
+        };
+      })
     );
     setSidebarOpen(false);
   };
 
   useEffect(() => {
     setNavigation((prev) =>
-      prev.map((item) => ({
-        ...item,
-        current: item.href === window.location.pathname,
-      }))
+      prev.map((item) => {
+        const isCurrent = item.href === window.location.pathname || item.subNav?.some((subItem) => subItem.href === window.location.pathname);
+        return {
+          ...item,
+          current: isCurrent,
+          subNav: item.subNav?.map((subItem) => ({
+            ...subItem,
+            current: subItem.href === window.location.pathname,
+          })),
+        };
+      })
     );
   }, [navigate]);
 
@@ -70,14 +101,29 @@ export default function AdminLayout() {
               </div>
               <div className="flex gap-1 flex-col">
                 {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => handleNavClick(item.href)}
-                    className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
-                  >
-                    {item.name}
-                  </Link>
+                  <div key={item.name}>
+                    <Link
+                      to={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
+                    >
+                      {item.name}
+                    </Link>
+                    {item.current && item.subNav && (
+                      <div className="my-1 ml-2">
+                        {item.subNav.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            to={subItem.href}
+                            onClick={() => handleNavClick(subItem.href)}
+                            className={classNames(subItem.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 my-1 rounded-md p-2 text-sm font-semibold leading-6")}
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
                 <button onClick={logoutHandler} className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-300 hover:bg-sky-950 hover:text-white">
                   Logout
@@ -97,14 +143,29 @@ export default function AdminLayout() {
           </div>
           <div className="flex flex-col gap-1">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => handleNavClick(item.href)}
-                className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
-              >
-                {item.name}
-              </Link>
+              <div key={item.name}>
+                <Link
+                  to={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={classNames(item.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 rounded-md p-2 text-sm font-semibold leading-6")}
+                >
+                  {item.name}
+                </Link>
+                {item.current && item.subNav && (
+                  <div className="my-1 ml-2">
+                    {item.subNav.map((subItem) => (
+                      <Link
+                        key={subItem.name}
+                        to={subItem.href}
+                        onClick={() => handleNavClick(subItem.href)}
+                        className={classNames(subItem.current ? "bg-sky-950 text-white" : "text-gray-300 hover:bg-sky-950 hover:text-white", "group flex gap-y-3 my-1 rounded-md p-2 text-sm font-semibold leading-6")}
+                      >
+                        {subItem.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
 
             <button onClick={logoutHandler} className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-300 hover:bg-sky-950 hover:text-white">

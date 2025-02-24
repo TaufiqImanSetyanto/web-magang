@@ -4,13 +4,13 @@ import Loading from "../../components/Loading";
 import { statusColors } from "../../utils/StatusColors";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
-import { getTheme } from "../../utils/AdminCutiThemeTable";
+import { getTheme } from "../../utils/KelolaCutiThemeTable";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
 import Spinner from "../../components/Spinner";
 
-export default function AdminCuti() {
+export default function KelolaCuti() {
   const [cutiPendingList, setCutiPendingList] = useState([]);
   const [loadingFetch, setLoadingFetch] = useState(true);
   const [loadingSubmit, setloadingSubmit] = useState(false);
@@ -22,7 +22,7 @@ export default function AdminCuti() {
     async function fetchCutiPending() {
       try {
         setLoadingFetch(true);
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/listcuti`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/asisten/listcuti`);
         setCutiPendingList(data.cutiPending.reverse());
       } catch (error) {
         console.error("Error fetching cuti list:", error);
@@ -35,7 +35,7 @@ export default function AdminCuti() {
   async function handleDecision(id, status) {
     try {
       setloadingSubmit(true);
-      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/admin/kelolacuti/${id}`, { status });
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/asisten/kelolacuti/${id}`, { status });
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

@@ -44,6 +44,14 @@ function Login() {
           setTimeout(() => {
             navigate("/admin");
           }, 2000);
+        } else if (user.role === "asisten") {
+          setTimeout(() => {
+            navigate("/asisten");
+          }, 2000);
+        } else if (user.role === "manajer") {
+          setTimeout(() => {
+            navigate("/manajer");
+          }, 2000);
         } else {
           setTimeout(() => {
             navigate("/");
