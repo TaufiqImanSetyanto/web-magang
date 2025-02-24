@@ -4,8 +4,8 @@ const { DateTime } = require("luxon");
 async function checkIn(req, res) {
   try {
     const { userId, locationIn, jadwal, addressIn } = req.body;
-    const today = DateTime.now().setZone("Asia/Jakarta");
-    const day = today.toFormat("cccc");
+    const today = DateTime.now().setZone("Asia/Jakarta").setLocale("id");
+    const day = today.toFormat("EEEE");
     const date = today.toISODate();
     const checkInTime = today.toFormat("HH:mm:ss");
 
@@ -29,7 +29,7 @@ async function checkOut(req, res) {
   try {
     const { userId, locationOut, addressOut } = req.body;
 
-    const today = DateTime.now().setZone("Asia/Jakarta");
+    const today = DateTime.now().setZone("Asia/Jakarta").setLocale("id");
     const date = today.toISODate();
     const checkOutTime = today.toFormat("HH:mm:ss");
 
