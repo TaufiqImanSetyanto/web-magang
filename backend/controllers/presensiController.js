@@ -1,12 +1,13 @@
 const Presensi = require("../models/presensiModel");
+const { DateTime } = require("luxon");
 
 async function checkIn(req, res) {
   try {
     const { userId, locationIn, jadwal, addressIn } = req.body;
-    const today = new Date();
-    const day = today.toLocaleDateString("id-ID", { weekday: "long" });
-    const date = today.toISOString().split("T")[0];
-    const checkInTime = today.toTimeString().split(" ")[0];
+    const today = DateTime.now().setZone("Asia/Jakarta");
+    const day = today.toFormat("cccc");
+    const date = today.toISODate();
+    const checkInTime = today.toFormat("HH:mm:ss");
 
     const existingPresensi = await Presensi.findOne({
       userId,
@@ -28,8 +29,9 @@ async function checkOut(req, res) {
   try {
     const { userId, locationOut, addressOut } = req.body;
 
-    const today = new Date();
-    const date = today.toISOString().split("T")[0];
+    const today = DateTime.now().setZone("Asia/Jakarta");
+    const date = today.toISODate();
+    const checkOutTime = today.toFormat("HH:mm:ss");
 
     const presensi = await Presensi.findOne({
       userId,
@@ -50,7 +52,7 @@ async function checkOut(req, res) {
 
     presensi.locationOut = locationOut;
     presensi.addressOut = addressOut;
-    presensi.checkOutTime = new Date().toTimeString().split(" ")[0];
+    presensi.checkOutTime = checkOutTime;
     await presensi.save();
 
     res.status(200).json({ success: true, message: "Berhasil check-out", presensi });
