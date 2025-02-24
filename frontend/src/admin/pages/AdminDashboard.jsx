@@ -1,116 +1,113 @@
-import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/authContext";
 import axios from "axios";
-import Loading from "../../components/Loading";
-import profile from "../../assets/profile.png";
-import { PencilIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
-import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import Pagination from "../../components/Pagination";
+import { useState } from "react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../components/HandleNotif";
+import Information from "../../components/Information";
+import Input from "../../components/Input";
+import Spinner from "../../components/Spinner";
 
 export default function AdminDashboard() {
-  const [loadingFetch, setLoadingFetch] = useState(true);
-  const [allUser, setAllUser] = useState([]);
-  const [listBagian,setListBagian] = useState([]);
-  const [filterBagian, setFilterBagian] = useState("");
-  const filteredUser = allUser.filter((user) => {
-    return filterBagian ? user.bagian === filterBagian : true;
+  const { user } = useAuth();
+  const id = user?._id;
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState({
+    oldPassword: "",
+    newPassword: "",
   });
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredUser.slice(indexOfFirstData, indexOfLastData);
-
-  const totalData = filteredUser.length;
-  const totalPages = Math.ceil(totalData / dataPerPage);
-
-  const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const { oldPassword, newPassword } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
   };
 
-  const prevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  useEffect(() => {
-    async function fetchBagian() {
-      try {
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/data/listbagian`);
-        setListBagian(data.bagian);
-      } catch (error) {
-        console.error("Error fetching bagian data:", error);
-      } 
-    }
-    async function fetchAllUser() {
-      try {
-        setLoadingFetch(true);
-        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/alluser`);
-        const { allUser } = data;
-        setAllUser(allUser);
-      } catch (error) {
-        console.error("Error fetching all user", error);
-      } finally {
-        setLoadingFetch(false);
+  const handleChangePassword = async () => {
+    try {
+      setLoadingSubmit(true);
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/auth/changepassword/${id}`, {
+        oldPassword,
+        newPassword,
+      });
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+      } else {
+        handleError(message);
       }
+    } catch (error) {
+      console.error(error);
+      handleError(error.response.data.message);
+    } finally {
+      setLoadingSubmit(false);
+      setInputValue({
+        ...inputValue,
+        oldPassword: "",
+        newPassword: "",
+      });
     }
-    fetchBagian()
-    fetchAllUser();
-  }, []);
-
+  };
   return (
     <>
-      <h2 className="text-xl font-bold text-gray-900">List Karyawan</h2>
       <div>
-        <h3 className="block text-md/6 font-medium text-gray-900">Filter</h3>
-        <div className="mt-1 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6">
-          <select
-            value={filterBagian}
-            onChange={(e) => setFilterBagian(e.target.value)}
-            className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
-          >
-            <option value={""}>Bagian</option>
-            {listBagian.map((item) => (
-              <option key={item._id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-          <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+        <h2 className="font-bold text-xl text-gray-900">Profile</h2>
+        <div>
+          <div className="divide-y divide-gray-300">
+            <Information first="Nama Lengkap" second={user.username} />
+            <Information first="NIK" second={user.NIK} />
+            <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <div className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <button
+                  onClick={() => setOpen(true)}
+                  className=" rounived-md bg-sky-800 px-3 py-2 text-sm font-semibold rounded text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                >
+                  Ganti Password
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="md:py-2 px-6  md:m-4 shadow-md">
-        {loadingFetch ? (
-          <Loading />
-        ) : (
-          <>
-            <ul className="divide-y divide-gray-300">
-              {currentData.length > 0 ? (
-                currentData.map((data) => (
-                  <li key={data._id} className="flex justify-between gap-x-6 py-5">
-                    <div className="flex min-w-0 gap-x-4">
-                      <img alt="" src={profile} className="size-12 flex-none self-center rounded-full bg-gray-50" />
-                      <div className="min-w-0 flex-auto">
-                        <p className="text-sm/6 font-semibold text-gray-950">{data.username}</p>
-                        <p className="text-xs/3 font-semibold text-gray-700">{data.bagian}</p>
-                        <p className="mt-1 truncate text-xs/5 text-gray-500">{data.NIK}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-end">
-                      <Link to={`edituser/${data._id}`}>
-                        <PencilIcon className="size-5 m-1" />
-                      </Link>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <p className="text-gray-600">Tidak ada data user.</p>
-              )}
-            </ul>
-            <Pagination indexOfFirstData={indexOfFirstData} indexOfLastData={indexOfLastData} totalData={totalData} totalPages={totalPages} currentPage={currentPage} nextPage={nextPage} prevPage={prevPage} />
-          </>
-        )}
-      </div>
+      <Dialog open={open} onClose={() => {}} className="relative z-10">
+        <DialogBackdrop transition className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in" />
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto items-center">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <DialogPanel
+              transition
+              className="relative transform overflow-hidiven rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+            >
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Ganti Password</h2>
+                <Input label="Password Lama" name="oldPassword" value={oldPassword} onChange={handleOnChange} type="text" />
+                <Input label="Password Baru" name="newPassword" value={newPassword} onChange={handleOnChange} type="text" />
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={loadingSubmit}
+                  className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
+                >
+                  {loadingSubmit ? <Spinner/> : "Ganti Password"}
+                </button>
+                <button
+                  type="button"
+                  data-autofocus
+                  onClick={() => setOpen(false)}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
+      </Dialog>
+      <ToastContainer />
     </>
   );
 }

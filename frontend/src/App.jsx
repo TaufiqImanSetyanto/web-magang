@@ -11,6 +11,7 @@ import AdminDashboard from "./admin/pages/AdminDashboard"
 import AdminLayout from "./admin/layouts/AdminLayout"
 import EditUser from "./admin/pages/EditUser"
 import AdminRiwayatCuti from "./admin/pages/AdminRiwayatCuti";
+import ListUser from "./admin/pages/ListUser";
 import Presensi from "./pages/Presensi"
 import AdminPresensi from "./admin/pages/AdminPresensi";
 import RiwayatPresensi from "./pages/RiwayatPresensi";
@@ -51,7 +52,8 @@ function App() {
            <Route index element={<AdminDashboard />} />
            <Route path="kelolapresensi" element={<AdminPresensi />} />
            <Route path="riwayatcuti" element={<AdminRiwayatCuti/>}/>
-           <Route path="edituser/:id" element={<EditUser/>} />
+           <Route path="listuser" element={<ListUser/>}/> 
+           <Route path="listuser/edituser/:id" element={<EditUser/>} />
         </Route>
         <Route
           path="/asisten"

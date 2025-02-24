@@ -4,7 +4,7 @@ const Presensi = require("../models/presensiModel");
 
 async function listAllUser(req, res) {
   try {
-    const allUser = await User.find({ role: "user" });
+    const allUser = await User.find({ role: { $ne: "admin" } });
     if (!allUser) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, allUser });
   } catch (error) {
@@ -24,8 +24,8 @@ async function getUser(req, res) {
 async function editUser(req, res) {
   try {
     const { id } = req.params;
-    const { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti } = req.body;
-    const user = await User.findByIdAndUpdate(id, { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti }, { new: true });
+    const { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti, role } = req.body;
+    const user = await User.findByIdAndUpdate(id, { username, NIK, bagian, tahunPengangkatan, hakCuti, tahunCuti, role }, { new: true });
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, message: "Berhasil memperbarui user" });
   } catch (error) {
@@ -33,7 +33,7 @@ async function editUser(req, res) {
   }
 }
 
-async function getAcceptedCuti(req, res) {
+async function listAcceptedCuti(req, res) {
   try {
     const acceptedCuti = await Cuti.find({ finalStatus: "accepted" }).populate("userId");
     if (!acceptedCuti) return res.status(404).json({ message: "Cuti not found" });
@@ -53,4 +53,4 @@ async function listAllPresensi(req, res) {
   }
 }
 
-module.exports = { listAllUser, getUser, editUser, getAcceptedCuti, listAllPresensi };
+module.exports = { listAllUser, getUser, editUser, listAcceptedCuti, listAllPresensi };

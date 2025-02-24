@@ -6,11 +6,13 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../components/HandleNotif";
 import Input from "../../components/Input";
+import Spinner from "../../components/Spinner";
 
 export default function EditUser() {
   const { id } = useParams();
   const [listBagian, setListBagian] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [user, setUser] = useState({
     username: "",
     NIK: "",
@@ -24,6 +26,7 @@ export default function EditUser() {
     },
     bagian: "",
     tahunPengangkatan: "",
+    role: "",
   });
   useEffect(() => {
     async function fetchBagian() {
@@ -32,7 +35,7 @@ export default function EditUser() {
         setListBagian(data.bagian);
       } catch (error) {
         console.error("Error fetching bagian data:", error);
-      } 
+      }
     }
     async function fetchUser() {
       try {
@@ -42,7 +45,7 @@ export default function EditUser() {
       } catch (error) {
         console.error("Error fetching user", error);
       } finally {
-        setLoading(false);
+        setLoadingFetch(false);
       }
     }
     fetchBagian();
@@ -77,6 +80,7 @@ export default function EditUser() {
   }
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoadingSubmit(true);
     try {
       const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/admin/edituser/${id}`, user);
       const { success, message } = data;
@@ -88,12 +92,14 @@ export default function EditUser() {
     } catch (error) {
       console.log(error);
       handleError(error.response.data.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   }
 
   return (
     <>
-      {loading ? (
+      {loadingFetch ? (
         <Loading />
       ) : (
         <div>
@@ -102,6 +108,25 @@ export default function EditUser() {
             <div className="flex flex-col gap-1">
               <Input label="Nama" name="username" value={user.username} onChange={handleOnChange} type="text" />
               <Input label="NIK" name="NIK" value={user.NIK} onChange={handleOnChange} type="text" />
+              <div className="mb-1">
+                <label htmlFor="role" className="block text-sm/6 font-medium text-gray-900">
+                  Role
+                </label>
+                <div className="mt-2 grid grid-cols-1">
+                  <select
+                    id="role"
+                    name="role"
+                    value={user.role}
+                    onChange={handleOnChange}
+                    className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+                  >
+                    <option value="user">User</option>
+                    <option value="asisten">Asisten</option>
+                    <option value="manajer">Manajer</option>
+                  </select>
+                  <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+                </div>
+              </div>
               <div className="mb-1">
                 <label htmlFor="bagian" className="block text-sm/6 font-medium text-gray-900">
                   Bagian
@@ -130,7 +155,7 @@ export default function EditUser() {
               <Input label="Tahun Cuti Panjang" name="tahunCuti.panjang" value={user.tahunCuti.panjang} onChange={handleOnChange} type="text" />
               <div className="mt-4 flex justify-end">
                 <button type="submit" className=" rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
-                  Simpan
+                  {loadingSubmit ? <Spinner /> : "Simpan"}
                 </button>
               </div>
             </div>
