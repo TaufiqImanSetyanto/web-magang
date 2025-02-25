@@ -19,7 +19,7 @@ async function checkIn(req, res) {
       });
     }
     const presensi = await Presensi.create({ userId, locationIn, date, day, jadwal, checkInTime, addressIn });
-    res.status(201).json({ success: true, message: "Berhasil check-in", presensi });
+    return res.status(201).json({ success: true, message: "Berhasil check-in", presensi });
   } catch (error) {
     console.log(error);
   }
@@ -27,11 +27,31 @@ async function checkIn(req, res) {
 
 async function checkOut(req, res) {
   try {
-    const { userId, locationOut, addressOut } = req.body;
-
+    const { userId, locationOut, jadwal, addressOut } = req.body;
     const today = DateTime.now().setZone("Asia/Jakarta").setLocale("id");
     const date = today.toISODate();
+    const yesterdayDate = today.minus({ days: 1 }).toISODate();
     const checkOutTime = today.toFormat("HH:mm:ss");
+
+    if (jadwal === "Shift Malam") {
+      const presensi = await Presensi.findOne({ userId, date: yesterdayDate, jadwal: "Shift Malam" });
+      if (!presensi) {
+        return res.status(400).json({
+          message: "Kamu belum check-in",
+        });
+      }
+      if (presensi.checkOutTime) {
+        return res.status(400).json({
+          message: "Kamu sudah check-out",
+        });
+      }
+      presensi.locationOut = locationOut;
+      presensi.addressOut = addressOut;
+      presensi.checkOutTime = checkOutTime;
+      await presensi.save();
+  
+      return res.status(200).json({ success: true, message: "Berhasil check-out", presensi });
+    }
 
     const presensi = await Presensi.findOne({
       userId,
@@ -66,7 +86,7 @@ async function listRiwayatPresensi(req, res) {
     const userId = req.params.id;
     const riwayatPresensi = await Presensi.find({ userId });
     if (!riwayatPresensi) res.status(400).json({ message: "Tidak ada riwayat presensi" });
-    res.status(200).json({ success: true, message: "Berhasil mengambil riwayat presensi", riwayatPresensi });
+    return res.status(200).json({ success: true, message: "Berhasil mengambil riwayat presensi", riwayatPresensi });
   } catch (error) {
     console.log(error);
   }

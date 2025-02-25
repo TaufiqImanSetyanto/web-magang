@@ -125,6 +125,10 @@ export default function Presensi() {
   };
 
   const handleCheckOut = async () => {
+    if (!jadwal) {
+      handleError("Pilih jadwal terlebih dahulu");
+      return;
+    }
     setLoadingCheckOut(true);
     if (jadwal !== "Dinas Kebun" && jadwal !== "Dinas Luar") {
       const nearestOffice = officeLocation.reduce((prev, curr) => {
@@ -143,6 +147,7 @@ export default function Presensi() {
       const addressOut = await getAddress(location.latitude, location.longitude);
       const checkOut = {
         userId,
+        jadwal,
         locationOut: location,
         addressOut,
       };
