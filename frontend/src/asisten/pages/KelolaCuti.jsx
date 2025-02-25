@@ -13,6 +13,7 @@ import { useAuth } from "../../contexts/authContext";
 
 export default function KelolaCuti() {
   const { user } = useAuth();
+  const asisten = user?.username;
   const bagian = user?.bagian;
   const [cutiPendingList, setCutiPendingList] = useState([]);
   const [loadingFetch, setLoadingFetch] = useState(true);
@@ -38,7 +39,7 @@ export default function KelolaCuti() {
   async function handleDecision(id, status) {
     try {
       setloadingSubmit(true);
-      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/asisten/kelolacuti/${id}`, { status });
+      const { data } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/asisten/kelolacuti/${id}`, { status, asisten });
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

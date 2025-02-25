@@ -21,7 +21,7 @@ async function listCutiPending(req, res) {
 async function kelolaCutiSemi(req, res) {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, asisten } = req.body;
 
     if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Status tidak valid" });
@@ -39,6 +39,7 @@ async function kelolaCutiSemi(req, res) {
     }
 
     cuti.semiStatus = status;
+    cuti.asisten = asisten;
     if (status === "rejected") {
       cuti.finalStatus = status;
     }

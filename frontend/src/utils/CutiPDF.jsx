@@ -56,6 +56,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
   },
+  center: {
+    textAlign: "center",
+  },
+  gap: {
+    marginVertical: 30,
+  },
   approvedBox: {
     marginRight: 20,
     width: 90,
@@ -164,8 +170,39 @@ export const CutiPDF = ({ cuti, user }) => {
             </View>
           </View>
         </View>
-        <View style={styles.approvedBox}>
-          <Text>DISETUJUI</Text>
+        <View style={styles.section}></View>
+        <View style={styles.section}>
+          <View style={styles.row}>
+            <View style={styles.column}>
+              <Text style={styles.center}>Manajer</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>Asisten</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>Diwakilkan Kepada</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>Pemohon</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.gap}></View>
+        <View style={styles.section}>
+          <View style={styles.row}>
+            <View style={styles.column}>
+              <Text style={styles.center}>{cuti.manajer}</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>{cuti.asisten}</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>{cuti.diwakilkan}</Text>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.center}>{user.username}</Text>
+            </View>
+          </View>
         </View>
       </Page>
     </Document>

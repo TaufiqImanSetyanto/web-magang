@@ -16,8 +16,9 @@ export default function Cuti() {
   const [inputValue, setInputValue] = useState({
     jenisCuti: "tahunan",
     reason: "",
+    diwakilkan: "",
   });
-  const { jenisCuti, reason } = inputValue;
+  const { jenisCuti, reason, diwakilkan } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -47,6 +48,7 @@ export default function Cuti() {
         dates,
         jenisCuti,
         reason,
+        diwakilkan,
       });
       const { message, success } = data;
       if (success) {
@@ -55,6 +57,7 @@ export default function Cuti() {
           ...inputValue,
           jenisCuti: "tahunan",
           reason: "",
+          diwakilkan: "",
         });
         setDates([{ id: Date.now(), date: "" }]);
       } else {
@@ -123,12 +126,19 @@ export default function Cuti() {
             <div className="sm:col-span-5">
               <Input label="Alasan" name="reason" value={reason} onChange={handleOnChange} type="text" placeholder="Masukkan alasan cuti" />
             </div>
+            <div className="sm:col-span-5">
+              <Input label="Diwakilkan" name="diwakilkan" value={diwakilkan} onChange={handleOnChange} type="text" placeholder="Diwakilkan kepada" />
+            </div>
           </div>
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button disabled={loadingSubmit} type="submit" className="rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
-            {loadingSubmit ? <Spinner/> : <div>Submit</div>}
+          <button
+            disabled={loadingSubmit}
+            type="submit"
+            className="rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+          >
+            {loadingSubmit ? <Spinner /> : <div>Submit</div>}
           </button>
         </div>
       </form>

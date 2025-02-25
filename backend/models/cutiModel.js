@@ -9,6 +9,9 @@ const cutiSchema = new mongoose.Schema({
   dates: Array,
   daysRequested: Number,
   reason: String,
+  diwakilkan: String,
+  asisten: String,
+  manajer: String,
   semiStatus: {
     type: String,
     enum: ["pending", "accepted", "rejected"],

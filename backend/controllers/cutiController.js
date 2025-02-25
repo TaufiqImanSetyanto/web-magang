@@ -3,7 +3,7 @@ const Cuti = require("../models/cutiModel");
 
 async function cuti(req, res) {
   try {
-    const { userId, username, dates, jenisCuti, reason } = req.body;
+    const { userId, username, dates, jenisCuti, reason, diwakilkan } = req.body;
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
     const daysRequested = dates.length;
@@ -22,6 +22,7 @@ async function cuti(req, res) {
       jenisCuti: jenisCuti === "panjang" ? `panjang ${user.tahunCuti.panjang}` : `tahunan ${user.tahunCuti.tahunan}`,
       daysRequested,
       reason,
+      diwakilkan,
     });
     await permohonanCuti.save();
 
