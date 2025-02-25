@@ -44,9 +44,13 @@ async function kelolaCutiFinal(req, res) {
       }
       await user.save();
     }
-    cuti.manajer = manajer
+    cuti.manajer = manajer;
     cuti.finalStatus = status;
-    await cuti.save();
+    (cuti.sisaCuti = {
+      tahunan: user.hakCuti.tahunan,
+      panjang: user.hakCuti.panjang,
+    }),
+      await cuti.save();
     res.status(200).json({ success: true, message: "Berhasil memperbarui status cuti" });
   } catch (error) {
     console.log(error);

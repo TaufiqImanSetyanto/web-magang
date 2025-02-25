@@ -151,8 +151,8 @@ export const CutiPDF = ({ cuti, user }) => {
             </View>
             <View style={styles.column}>
               <Text> </Text>
-              <Text>{user.hakCuti.tahunan} Hari</Text>
-              <Text>{user.hakCuti.panjang} Hari</Text>
+              <Text>{cuti.sisaCuti.tahunan} Hari</Text>
+              <Text>{cuti.sisaCuti.panjang} Hari</Text>
             </View>
           </View>
         </View>

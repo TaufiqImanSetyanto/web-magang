@@ -5,6 +5,10 @@ const cutiSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  sisaCuti: {
+    tahunan: Number,
+    panjang: Number,
+  },
   jenisCuti: String,
   dates: Array,
   daysRequested: Number,
