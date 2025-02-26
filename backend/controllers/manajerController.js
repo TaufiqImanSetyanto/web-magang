@@ -28,7 +28,7 @@ async function listCutiSemi(req, res) {
 async function kelolaCutiFinal(req, res) {
   try {
     const { id } = req.params;
-    const { status, manajer } = req.body;
+    const { status, manajerId } = req.body;
 
     if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Status tidak valid" });
@@ -55,7 +55,7 @@ async function kelolaCutiFinal(req, res) {
         panjang: user.hakCuti.panjang,
       };
     }
-    cuti.manajer = manajer;
+    cuti.manajerId = manajerId;
     cuti.finalStatus = status;
     await cuti.save();
     res.status(200).json({ success: true, message: "Berhasil memperbarui status cuti" });

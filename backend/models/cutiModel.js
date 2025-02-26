@@ -14,8 +14,14 @@ const cutiSchema = new mongoose.Schema({
   daysRequested: Number,
   reason: String,
   diwakilkan: String,
-  asisten: String,
-  manajer: String,
+  asistenId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  manajerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   semiStatus: {
     type: String,
     enum: ["pending", "accepted", "rejected"],

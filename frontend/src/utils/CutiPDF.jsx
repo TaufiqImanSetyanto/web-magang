@@ -174,10 +174,10 @@ export const CutiPDF = ({ cuti, user }) => {
         <View style={styles.section}>
           <View style={styles.row}>
             <View style={styles.column}>
-              <Text style={styles.center}>Manajer</Text>
+              <Text style={styles.center}>{cuti.manajerId.bagian.name}</Text>
             </View>
             <View style={styles.column}>
-              <Text style={styles.center}>Asisten</Text>
+              <Text style={styles.center}>{cuti.asistenId.bagian.name}</Text>
             </View>
             <View style={styles.column}>
               <Text style={styles.center}>Diwakilkan Kepada</Text>
@@ -191,10 +191,10 @@ export const CutiPDF = ({ cuti, user }) => {
         <View style={styles.section}>
           <View style={styles.row}>
             <View style={styles.column}>
-              <Text style={styles.center}>{cuti.manajer}</Text>
+              <Text style={styles.center}>{cuti.manajerId.username}</Text>
             </View>
             <View style={styles.column}>
-              <Text style={styles.center}>{cuti.asisten}</Text>
+              <Text style={styles.center}>{cuti.asistenId.username}</Text>
             </View>
             <View style={styles.column}>
               <Text style={styles.center}>{cuti.diwakilkan}</Text>
