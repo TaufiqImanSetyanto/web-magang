@@ -35,9 +35,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   bagian: {
-    type: String,
-    default: "Keuangan & Umum",
-    required: [true, "Your department is required"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Bagian",
   },
   tahunPengangkatan: {
     type: String,

@@ -31,7 +31,7 @@ async function login(req, res) {
     if (!NIK || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const user = await User.findOne({ NIK });
+    const user = await User.findOne({ NIK }).populate("bagian");
     if (!user) {
       return res.status(400).json({ message: "Incorrect NIK" });
     }
@@ -90,9 +90,9 @@ async function deleteUser(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
     await User.findByIdAndDelete(id);
-    res.status(200).json({success: true , message:"User deleted successfully"})
+    res.status(200).json({ success: true, message: "User deleted successfully" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 

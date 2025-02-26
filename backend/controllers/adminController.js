@@ -4,7 +4,7 @@ const Presensi = require("../models/presensiModel");
 
 async function listAllUser(req, res) {
   try {
-    const allUser = await User.find({ role: { $ne: "admin" } });
+    const allUser = await User.find({ role: { $ne: "admin" } }).populate("bagian");
     if (!allUser) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, allUser });
   } catch (error) {
@@ -14,7 +14,7 @@ async function listAllUser(req, res) {
 async function getUser(req, res) {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("bagian");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ success: true, user });
   } catch (error) {
@@ -35,7 +35,7 @@ async function editUser(req, res) {
 
 async function listAcceptedCuti(req, res) {
   try {
-    const acceptedCuti = await Cuti.find({ finalStatus: "accepted" }).populate("userId");
+    const acceptedCuti = await Cuti.find({ finalStatus: "accepted" }).populate({ path: "userId", populate: { path: "bagian" } });
     if (!acceptedCuti) return res.status(404).json({ message: "Cuti not found" });
     res.status(200).json({ success: true, acceptedCuti });
   } catch (error) {
@@ -45,7 +45,7 @@ async function listAcceptedCuti(req, res) {
 
 async function listAllPresensi(req, res) {
   try {
-    const presensi = await Presensi.find().populate("userId");
+    const presensi = await Presensi.find().populate({ path: "userId", populate: { path: "bagian" } });
     if (!presensi) return res.status(404).json({ message: "Presensi not found" });
     res.status(200).json({ success: true, presensi });
   } catch (error) {

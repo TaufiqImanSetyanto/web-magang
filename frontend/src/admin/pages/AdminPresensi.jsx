@@ -15,7 +15,7 @@ export default function AdminPresensi() {
   const [filterBagian, setFilterBagian] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
   const filteredPresensiList = presensiList.filter((presensi) => {
-    return (filterBagian ? presensi.userId.bagian === filterBagian : true) && (filterTanggal ? presensi.date === filterTanggal : true);
+    return (filterBagian ? presensi.userId.bagian.name === filterBagian : true) && (filterTanggal ? presensi.date === filterTanggal : true);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,7 +64,7 @@ export default function AdminPresensi() {
   const handleDownload = () => {
     const headers = [
       { header: "Nama", key: "userId.username" },
-      { header: "Bagian", key: "userId.bagian" },
+      { header: "Bagian", key: "userId.bagian.name" },
       { header: "Hari", key: "day" },
       { header: "Tanggal", key: "date" },
       { header: "Jadwal", key: "jadwal" },
@@ -148,7 +148,7 @@ export default function AdminPresensi() {
                 {tableList.map((presensi) => (
                   <Row key={presensi._id} item={presensi}>
                     <Cell>{presensi.userId.username}</Cell>
-                    <Cell>{presensi.userId.bagian}</Cell>
+                    <Cell>{presensi.userId.bagian.name}</Cell>
                     <Cell>{presensi.day}</Cell>
                     <Cell>{presensi.date}</Cell>
                     <Cell>{presensi.jadwal}</Cell>

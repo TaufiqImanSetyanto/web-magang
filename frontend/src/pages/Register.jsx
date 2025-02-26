@@ -28,7 +28,7 @@ function Register() {
   const [inputValue, setInputValue] = useState({
     username: "",
     NIK: "",
-    bagian: "Keuangan & Umum",
+    bagian: "",
     password: "",
   });
   const { NIK, password, bagian, username } = inputValue;
@@ -43,6 +43,7 @@ function Register() {
     e.preventDefault();
     setLoadingSubmit(true);
     try {
+    
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
         {
@@ -75,7 +76,7 @@ function Register() {
           ...inputValue,
           NIK: "",
           password: "",
-          bagian: "Keuangan & Umum",
+          bagian: "",
           username: "",
         });
       } else {
@@ -110,10 +111,14 @@ function Register() {
                 name="bagian"
                 value={bagian}
                 onChange={handleOnChange}
+                required
                 className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               >
+                <option value={""}>
+                  Bagian
+                </option>
                 {listBagian.map((item) => (
-                  <option key={item._id} value={item.name}>
+                  <option key={item._id} value={item._id}>
                     {item.name}
                   </option>
                 ))}

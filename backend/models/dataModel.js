@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const bagianSchema = new mongoose.Schema({
   name: String,
+  bawahan: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bagian" }],
 });
 const officeSchema = new mongoose.Schema({
   name: String,

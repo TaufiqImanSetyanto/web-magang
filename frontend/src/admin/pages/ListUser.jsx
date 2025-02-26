@@ -18,7 +18,7 @@ export default function ListUser() {
   const [filterBagian, setFilterBagian] = useState("");
   const [filterRole, setFilterRole] = useState("");
   const filteredUser = allUser.filter((user) => {
-    return (filterBagian ? user.bagian === filterBagian : true) && (filterRole ? user.role === filterRole : true);
+    return (filterBagian ? user.bagian.name === filterBagian : true) && (filterRole ? user.role === filterRole : true);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,7 +128,7 @@ export default function ListUser() {
                       <img alt="" src={profile} className="size-12 flex-none self-center rounded-full bg-gray-50" />
                       <div className="min-w-0 flex-auto">
                         <p className="text-sm/6 font-semibold text-gray-950">{data.username}</p>
-                        <p className="text-xs/3 font-semibold text-gray-700">{data.bagian}</p>
+                        <p className="text-xs/3 font-semibold text-gray-700">{data.bagian.name}</p>
                         <p className="mt-1 truncate text-xs/5 text-gray-500">{data.NIK}</p>
                       </div>
                     </div>

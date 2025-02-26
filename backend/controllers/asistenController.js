@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Cuti = require("../models/cutiModel");
+const { Bagian } = require("../models/dataModel");
 
 async function listCutiPending(req, res) {
   try {
@@ -7,9 +8,18 @@ async function listCutiPending(req, res) {
     if (!bagian) {
       return res.status(400).json({ message: "Bagian tidak ditemukan" });
     }
+    const bagianData = await Bagian.findOne(bagian).populate("bawahan");
+    const bawahanNames = [bagianData.name, ...bagianData.bawahan.map((b) => b.name)];
+    const atasan = await Bagian.findOne({ bawahan: bagianData._id });
+    bawahanNames.push(atasan.name);
+
     const cutiPending = await Cuti.find({ semiStatus: "pending" })
-      .populate("userId")
-      .then((cutiList) => cutiList.filter((cuti) => cuti.userId?.bagian === bagian));
+      .populate({ path: "userId", populate: { path: "bagian" } })
+      .then((cutiList) => {
+        return cutiList.filter((cuti) => {
+          return bawahanNames.includes(cuti.userId?.bagian.name);
+        });
+      });
     if (!cutiPending) {
       res.status(404).json({ message: "Tidak ada yang mengajukan cuti" });
     }

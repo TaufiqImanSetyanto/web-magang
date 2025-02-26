@@ -103,7 +103,7 @@ export const CutiPDF = ({ cuti, user }) => {
             </View>
             <View style={styles.column}>
               <Text>{user.username}</Text>
-              <Text>{user.bagian}</Text>
+              <Text>{user.bagian.name}</Text>
             </View>
           </View>
         </View>

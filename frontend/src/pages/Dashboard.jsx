@@ -59,7 +59,7 @@ export default function Dashboard() {
           <div className="divide-y divide-gray-300">
             <Information first="Nama Lengkap" second={user.username} />
             <Information first="NIK" second={user.NIK} />
-            <Information first="Bagian" second={user.bagian} />
+            <Information first="Bagian" second={user.bagian.name} />
             <Information first="Tahun Pengangkatan" second={user.tahunPengangkatan} />
             <Information first={`Hak Cuti Tahunan ${user.tahunCuti.tahunan}`} second={user.hakCuti.tahunan} />
             <Information first={`Hak Cuti Panjang ${user.tahunCuti.panjang}`} second={user.hakCuti.panjang} />
