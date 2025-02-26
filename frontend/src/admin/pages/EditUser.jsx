@@ -154,7 +154,7 @@ export default function EditUser() {
               <Input label="Tahun Cuti Tahunan" name="tahunCuti.tahunan" value={user.tahunCuti.tahunan} onChange={handleOnChange} type="text" />
               <Input label="Tahun Cuti Panjang" name="tahunCuti.panjang" value={user.tahunCuti.panjang} onChange={handleOnChange} type="text" />
               <div className="mt-4 flex justify-end">
-                <button type="submit" className=" rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
+                <button type="submit" className=" rounded-md bg-sky-800 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
                   {loadingSubmit ? <Spinner /> : "Simpan"}
                 </button>
               </div>

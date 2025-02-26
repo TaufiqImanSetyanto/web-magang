@@ -4,23 +4,16 @@ const bcrypt = require("bcrypt");
 
 async function register(req, res) {
   try {
-    const { NIK, password, bagian, username } = req.body;
+    const { NIK, password, bagian, username, role } = req.body;
     const existingUser = await User.findOne({ NIK });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-    const user = new User({ NIK, password, bagian, username });
+    const user = new User({ NIK, password, bagian, username, role });
     user.password = await bcrypt.hash(password, 12);
     await user.save();
 
-    const token = createSecretToken(user._id);
-    res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-    res.status(201).json({ message: "User registered successfully", success: true, user });
+    res.status(201).json({ success: true, message: "User registered successfully" });
   } catch (error) {
     console.error(error);
   }

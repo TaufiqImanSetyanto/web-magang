@@ -1,6 +1,6 @@
 import logo from "../assets/ptsgn_logo.png";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../components/HandleNotif";
@@ -87,17 +87,14 @@ function Login() {
             <button
               type="submit"
               disabled={loadingSubmit}
-              className="flex w-full justify-center rounded-md bg-sky-900 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
+              className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
             >
               {loadingSubmit ? <Spinner /> : "Masuk"}
             </button>
           </div>
         </form>
         <p className="mt-6 text-center text-sm/6 text-gray-500">
-          Belum punya akun?{" "}
-          <Link to={"/register"} className="font-semibold text-sky-700 hover:text-sky-600">
-            Buat akun disini
-          </Link>
+          Silahkan hubungi admin jika terdapat masalah
         </p>
       </div>
       <ToastContainer />

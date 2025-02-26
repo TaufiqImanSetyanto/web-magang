@@ -1,17 +1,12 @@
-import logo from "../assets/ptsgn_logo.png";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../components/HandleNotif";
-import { useAuth } from "../contexts/authContext";
+import { handleError, handleSuccess } from "../../components/HandleNotif";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import Input from "../components/Input";
-import Spinner from "../components/Spinner";
+import Input from "../../components/Input";
+import Spinner from "../../components/Spinner";
 
 function Register() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [listBagian, setListBagian] = useState([]);
   useEffect(() => {
@@ -29,9 +24,10 @@ function Register() {
     username: "",
     NIK: "",
     bagian: "",
+    role: "user",
     password: "",
   });
-  const { NIK, password, bagian, username } = inputValue;
+  const { NIK, password, bagian, username, role } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -43,7 +39,6 @@ function Register() {
     e.preventDefault();
     setLoadingSubmit(true);
     try {
-    
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
         {
@@ -51,32 +46,15 @@ function Register() {
         },
         { withCredentials: true }
       );
-      const { success, message, user } = data;
+      const { success, message } = data;
       if (success) {
-        login(user);
         handleSuccess(message);
-        if (user.role === "admin") {
-          setTimeout(() => {
-            navigate("/admin");
-          }, 2000);
-        } else if (user.role === "asisten") {
-          setTimeout(() => {
-            navigate("/asisten");
-          }, 2000);
-        } else if (user.role === "manajer") {
-          setTimeout(() => {
-            navigate("/manajer");
-          }, 2000);
-        } else {
-          setTimeout(() => {
-            navigate("/");
-          }, 2000);
-        }
         setInputValue({
           ...inputValue,
           NIK: "",
           password: "",
           bagian: "",
+          role: "user",
           username: "",
         });
       } else {
@@ -91,13 +69,9 @@ function Register() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-6">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img alt="PT SGN" src={logo} className="mx-auto h-24 w-auto" />
-        <h2 className="text-center text-2xl/9 font-bold tracking-tight text-gray-900">Daftar akun</h2>
-      </div>
-
-      <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div>
+      <h2 className="text-xl font-bold text-gray-900">Register</h2>
+      <div className="mt-2 ">
         <form onSubmit={handleSubmit} method="POST" className="space-y-2">
           <Input label="Nama" name="username" value={username} onChange={handleOnChange} type="text" placeholder="Masukkan username" />
           <Input label="NIK" name="NIK" value={NIK} onChange={handleOnChange} type="text" placeholder="Masukkan NIK" />
@@ -114,9 +88,7 @@ function Register() {
                 required
                 className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
               >
-                <option value={""}>
-                  Bagian
-                </option>
+                <option value={""}>Bagian</option>
                 {listBagian.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.name}
@@ -126,23 +98,37 @@ function Register() {
               <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
             </div>
           </div>
+          <div className="mb-1">
+            <label htmlFor="role" className="block text-sm/6 font-medium text-gray-900">
+              Role
+            </label>
+            <div className="mt-2 grid grid-cols-1">
+              <select
+                id="role"
+                name="role"
+                value={role}
+                onChange={handleOnChange}
+                required
+                className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-600 sm:text-sm/6"
+              >
+                <option value="user">User</option>
+                <option value="asisten">Asisten</option>
+                <option value="manajer">Manajer</option>
+              </select>
+              <ChevronDownIcon aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+            </div>
+          </div>
           <Input label="Password" name="password" value={password} onChange={handleOnChange} type="password" placeholder="Masukkan Password" />
-          <div>
+          <div className="mt-4 flex justify-end">
             <button
               type="submit"
               disabled={loadingSubmit}
-              className="mt-7 flex w-full justify-center rounded-md bg-sky-900 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
+              className="rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-900"
             >
               {loadingSubmit ? <Spinner /> : "Daftar"}
             </button>
           </div>
         </form>
-        <p className="mt-2 text-center text-sm/6 text-gray-500">
-          Sudah punya akun?{" "}
-          <Link to={"/login"} className="font-semibold text-sky-700 hover:text-sky-600">
-            Masuk
-          </Link>
-        </p>
       </div>
       <ToastContainer />
     </div>

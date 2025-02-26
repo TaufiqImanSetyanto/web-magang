@@ -20,6 +20,7 @@ export default function AdminLayout() {
     { name: "Kelola Presensi", href: "/admin/kelolapresensi", current: false },
     { name: "Riwayat Cuti", href: "/admin/riwayatcuti", current: false },
     { name: "List User", href: "/admin/listuser", current: false },
+    { name: "Register", href: "/admin/register", current: false },
   ]);
 
   const handleNavClick = (clickedHref) => {

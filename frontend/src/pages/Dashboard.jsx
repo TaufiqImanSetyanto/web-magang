@@ -67,7 +67,7 @@ export default function Dashboard() {
               <div className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <button
                   onClick={() => setOpen(true)}
-                  className=" rounived-md bg-sky-800 px-3 py-2 text-sm font-semibold rounded text-white shadow-xs hover:bg-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                  className=" rounived-md bg-sky-800 px-3 py-2 text-sm font-semibold rounded text-white shadow-xs hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                 >
                   Ganti Password
                 </button>
